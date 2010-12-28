@@ -1,0 +1,54 @@
+/*
+ * File: gui.css
+ * Author: Steve Eriksson - steve.eriksson@gmail.com
+ *
+ * Styles used by graphical elements in the SVG,
+ * mainly gui.js
+ */
+
+.edge:hover {
+    cursor: pointer;
+}
+
+.node:hover {
+    cursor: pointer;
+}
+
+text.popup {
+    fill: white;
+    font-size: 18px;
+    text-anchor: middle;
+}
+
+.menu_text {
+    fill: white;
+    font-size: 18px;
+}
+
+.menu_text:hover {
+    fill: red;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.window {
+    fill:black;
+    fill-opacity: 0.8;
+}
+
+.titlebar {
+    fill: black;
+    fill-opacity: 1.0;
+}
+
+.button {
+    fill: red;
+    fill-opacity: 0.8;
+}
+
+.button:hover {
+    fill: red;
+    fill-opacity: 1.0;
+    cursor: pointer;
+}
+
