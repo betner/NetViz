@@ -1,0 +1,109 @@
+\select@language {swedish}
+\contentsline {chapter}{\numberline {1}Inledning}{1}
+\contentsline {section}{\numberline {1.1}Bakgrund}{1}
+\contentsline {section}{\numberline {1.2}Existerande system}{1}
+\contentsline {section}{\numberline {1.3}Problem}{2}
+\contentsline {section}{\numberline {1.4}Motivering}{2}
+\contentsline {section}{\numberline {1.5}Syfte}{3}
+\contentsline {section}{\numberline {1.6}Avgränsningar}{3}
+\contentsline {section}{\numberline {1.7}Metod}{3}
+\contentsline {subsection}{\numberline {1.7.1}Förstå problemet}{3}
+\contentsline {subsection}{\numberline {1.7.2}Skapa en plan}{4}
+\contentsline {subsection}{\numberline {1.7.3}Utföra planen}{4}
+\contentsline {subsection}{\numberline {1.7.4}Utvärdera resultatet}{4}
+\contentsline {section}{\numberline {1.8}Rapportens disposition}{4}
+\contentsline {chapter}{\numberline {2}Krav}{5}
+\contentsline {section}{\numberline {2.1}Obligatoriska krav}{5}
+\contentsline {section}{\numberline {2.2}Frivilliga krav}{6}
+\contentsline {section}{\numberline {2.3}Testning av krav}{6}
+\contentsline {section}{\numberline {2.4}Sammanfattning}{7}
+\contentsline {chapter}{\numberline {3}Bakgrund}{8}
+\contentsline {section}{\numberline {3.1}Nätverksvisualisering}{8}
+\contentsline {section}{\numberline {3.2}Öppen mjukvara}{8}
+\contentsline {section}{\numberline {3.3}SVG}{8}
+\contentsline {section}{\numberline {3.4}GraphViz}{9}
+\contentsline {section}{\numberline {3.5}AJAX}{9}
+\contentsline {subsection}{\numberline {3.5.1}XHTML}{9}
+\contentsline {subsection}{\numberline {3.5.2}CSS}{9}
+\contentsline {subsection}{\numberline {3.5.3}DOM}{9}
+\contentsline {subsection}{\numberline {3.5.4}XML}{10}
+\contentsline {subsection}{\numberline {3.5.5}XSLT}{10}
+\contentsline {subsection}{\numberline {3.5.6}XMLHttpRequest}{10}
+\contentsline {subsection}{\numberline {3.5.7}JavaScript}{10}
+\contentsline {section}{\numberline {3.6}LightTPD}{10}
+\contentsline {section}{\numberline {3.7}CGI}{11}
+\contentsline {section}{\numberline {3.8}Sammanfattning}{11}
+\contentsline {chapter}{\numberline {4}Analys}{12}
+\contentsline {section}{\numberline {4.1}Bindning av JavaScript-funktioner}{12}
+\contentsline {subsection}{\numberline {4.1.1}Traversering av SVG-DOM i webbläsare}{13}
+\contentsline {subsection}{\numberline {4.1.2}Traversering av SVG-dokument på servern}{13}
+\contentsline {subsection}{\numberline {4.1.3}Transformation av SVG-dokument genom XSLT}{13}
+\contentsline {subsubsection}{Apache Xalan}{13}
+\contentsline {subsubsection}{XML::LibXSLT}{13}
+\contentsline {subsection}{\numberline {4.1.4}Skapa bindning till funktioner i GraphViz konfigurationsfil}{14}
+\contentsline {section}{\numberline {4.2}Hantering av användarinitierade händelser}{14}
+\contentsline {section}{\numberline {4.3}Anrop från klient till server}{14}
+\contentsline {section}{\numberline {4.4}Behandling av anrop från klient}{15}
+\contentsline {subsection}{\numberline {4.4.1}Monolitiskt CGI-skript}{15}
+\contentsline {subsection}{\numberline {4.4.2}CGI-skript som agerar skalprogram}{15}
+\contentsline {section}{\numberline {4.5}Sammanfattning}{15}
+\contentsline {chapter}{\numberline {5}Implementation}{16}
+\contentsline {section}{\numberline {5.1}Exekveringsvy}{16}
+\contentsline {subsubsection}{Webbläsare}{17}
+\contentsline {subsubsection}{Webbserver}{17}
+\contentsline {subsubsection}{JavaScript-bibliotek}{17}
+\contentsline {subsubsection}{CSS-stilmallar}{17}
+\contentsline {subsubsection}{CGI-skriptbibliotek}{17}
+\contentsline {subsubsection}{XSL-processor}{17}
+\contentsline {subsubsection}{XSL-formatmall}{17}
+\contentsline {subsubsection}{SVG-dokument}{17}
+\contentsline {section}{\numberline {5.2}Implementationsvy över JavaScript-bibliotek}{17}
+\contentsline {subsection}{\numberline {5.2.1}Base.js}{19}
+\contentsline {subsection}{\numberline {5.2.2}Gui.js}{19}
+\contentsline {subsection}{\numberline {5.2.3}Ext.js}{20}
+\contentsline {section}{\numberline {5.3}Implementationsvy över CGI-skriptbibliotek}{20}
+\contentsline {subsection}{\numberline {5.3.1}GetHWInfo.pl}{20}
+\contentsline {subsection}{\numberline {5.3.2}ShowOpenTT.pl}{20}
+\contentsline {subsection}{\numberline {5.3.3}HostToIP.pl}{20}
+\contentsline {subsection}{\numberline {5.3.4}PingNode.pl}{20}
+\contentsline {subsection}{\numberline {5.3.5}ShowNetwork.pl}{22}
+\contentsline {subsection}{\numberline {5.3.6}Network.svg}{22}
+\contentsline {subsection}{\numberline {5.3.7}SvgAddBindings.xsl}{22}
+\contentsline {section}{\numberline {5.4}Driftsättningsvy}{22}
+\contentsline {subsection}{\numberline {5.4.1}Klient}{22}
+\contentsline {subsection}{\numberline {5.4.2}Server}{22}
+\contentsline {section}{\numberline {5.5}Generering av SVG-dokument}{22}
+\contentsline {subsection}{\numberline {5.5.1}Förfrågan från klient}{24}
+\contentsline {subsection}{\numberline {5.5.2}Behandlande av förfrågan}{24}
+\contentsline {section}{\numberline {5.6}XSL transformation}{25}
+\contentsline {subsection}{\numberline {5.6.1}Identitetstransformation}{25}
+\contentsline {subsection}{\numberline {5.6.2}Tillägg av referenser till JavaScript-filer}{25}
+\contentsline {subsection}{\numberline {5.6.3}Bindning av JavaScript-funktioner}{26}
+\contentsline {section}{\numberline {5.7}Asynkrona anrop via XMLHttpRequest}{26}
+\contentsline {section}{\numberline {5.8}Expedieringsobjekt}{28}
+\contentsline {subsection}{\numberline {5.8.1}Funktion för att skapa expedieringsobjekt}{28}
+\contentsline {subsection}{\numberline {5.8.2}Tillägg av funktioner till expedieringsobjekten}{28}
+\contentsline {section}{\numberline {5.9}Funktionsmeny}{30}
+\contentsline {subsection}{\numberline {5.9.1}Konfiguration av funktionsmeny}{30}
+\contentsline {subsection}{\numberline {5.9.2}Funktionmenysobjektets gränssnitt}{30}
+\contentsline {section}{\numberline {5.10}Sammanfattning}{32}
+\contentsline {chapter}{\numberline {6}Testning och utvärdering}{33}
+\contentsline {section}{\numberline {6.1}Uppfyllande av syfte}{33}
+\contentsline {section}{\numberline {6.2}Utvärdering av designval}{33}
+\contentsline {subsection}{\numberline {6.2.1}Bindning av JavaScript-funktioner}{34}
+\contentsline {subsection}{\numberline {6.2.2}Hantering av användarinitierade händelser}{34}
+\contentsline {subsection}{\numberline {6.2.3}Anrop från klient till server}{34}
+\contentsline {subsection}{\numberline {6.2.4}Behandling av anrop från klient}{35}
+\contentsline {section}{\numberline {6.3}Uppfyllande av kravspecifikation}{35}
+\contentsline {subsection}{\numberline {6.3.1}Obligatoriska krav}{35}
+\contentsline {subsection}{\numberline {6.3.2}Frivilliga krav}{37}
+\contentsline {section}{\numberline {6.4}Sammanfattning}{39}
+\contentsline {chapter}{\numberline {7}Diskussion och slutsatser}{40}
+\contentsline {section}{\numberline {7.1}Diskussion}{40}
+\contentsline {section}{\numberline {7.2}Metodfrågor}{41}
+\contentsline {section}{\numberline {7.3}Framtida arbete}{41}
+\contentsline {subsection}{\numberline {7.3.1}Kompabilitet med fler webbläsare}{42}
+\contentsline {subsection}{\numberline {7.3.2}Utveckling av funktionsmenyn}{42}
+\contentsline {subsection}{\numberline {7.3.3}Säkerhet}{42}
+\contentsline {subsection}{\numberline {7.3.4}Sammankoppling med befintliga verktygsprogram}{42}
+\contentsline {section}{\numberline {7.4}Egna erfarenheter}{42}

@@ -1,0 +1,158 @@
+I detta kapitel sammanfattar jag det arbete som beskrivits rapporten.
+Jag inleder kapitlet med en diskussion rörande systemet. Därefter
+kommenterar jag valet av metod för arbetet följt av en diskussion om
+hur systemet skulle kunna vidareutvecklas. Avslutningsvis nämner jag
+några av de erfarenheter jag fått under arbetet.
+
+
+\section{Diskussion}
+% mål med arbetet
+Mitt mål med detta arbete var att ett system
+för att möjliggöra interaktiv visualisering av IP-nätverk och koppla
+ihop noder i nätverket med befintliga verktygsprogram. 
+Arbetet resulterade i:
+\begin{itemize}
+\item Ett XSL-program som berikar ett befintligt SVG-dokument skapat
+  genom GraphViz med bindningar till JavaScript-funktioner.
+\item Tre JavaScript-bibliotek med funktioner som gör nätverkskartan interaktiv och
+  kopplar ihop denna med CGI-skript på webbservern.
+\item CGI-skript för att hantera anrop från webbläsaren och utföra
+  önskade funktioner.
+\item En CSS-stilmall som styr utseendet av nätverkskartan.
+\end{itemize}
+
+Som jag nämnde i kapitel \vref{chap:test_och_utv}, uppfyllde systemet
+alla obligatoriska krav i kravspecifikationen förutom kravet att
+befintliga verktygsprogram ska kunna anropas. Det finns inga tekniska
+begränsningar i systemet som omöjliggör anrop av
+verktygsprogrammen. Från ett CGI-skript på webbservern kan godtyckliga
+program exekveras. 
+% kraven uppfyllda så när som på de som berör ihopkoppling med verktygsprogram
+
+% öppen mjukvara
+Systemet är helt uppbyggt på öppen mjukvara och öppna standarder. 
+Det har flera fördelar:
+\begin{itemize}
+\item Komponenterna i systemet är gratis att använda.
+\item All källkod i systemet är tillgänglig och kan undersökas.
+\item Öppen mjukvara är ofta väldigt robust.
+\item Genom att använda öppna standarder är det om inte enkelt
+  åtminstone möjligt att byta ut komponenter i det.
+\item Öppna standarder minskar risken att låsa sig till en viss
+  leverantör.
+\end{itemize}
+% nämn ihopkoppling med html apps
+
+Som kunde läsas i kapitel \vref{chap:analys}, behandlas enbart två olika XSL-transformerare i rapporten. 
+En mer uttömmande undersökning i området skulle eventuellt kunna tillföra fler alternativ till dessa.
+Dock anser jag det tveksamt om något annat alternativ skulle ge bättre funktionalitet och vara enklare att använda.
+
+Användbarheten i att presentera resultatet av en programkörning på servern i en SVG-baserad dialogruta kan ifrågasättas.
+Eftersom texten som presenteras i denna är vektorgrafik går det ej att
+markera och kopiera den som det gör i HTML-baserade applikationer. 
+Eftersom text i SVG version 1.0 \cite{StLaurent:svg_essentials:text} hanteras som vilket grafiskt element
+som helst så måste den positioneras med x- och y-koordinater. 
+Det finns alltså ingen automatisk funktion som inför radbrytningar när
+en textrad överstiger en given längd vilket gör det besvärligt att anpassa dynamiskt genererad data
+till dialogrutans storlek.
+
+Arbetet har förenklats avsevärt tack vare att systemet enbart behöver stödja en webbläsare. 
+En av de stora svårigheterna med att utveckla webbapplikationer är att
+göra dem kompatibla med de populäraste webbläsarna. % STORA WEBBLÄSARNA,
+                                % vardagligt, formulera om
+Detta avspeglas på de talrika JavaScript-bibliotek som skapats för att underlätta detta arbete för utvecklaren.
+Detta belyser vikten av att utvecklare av webbläsare och webbapplikationer följer öppna standarder i så stor utsträckning som möjligt.
+
+Programkod som ej redovisats i rapporten kan sändas vid önskemål
+genom att kontakta författaren.
+
+
+
+\section{Metodfrågor}
+Som jag beskrev i det inledande kapitlet valde jag att använda George
+Pólyas problemlösningsmetod för att strukturera arbetet. Metoden
+fungerade mycket bra för att skapa en övergripande struktur.
+Under utvecklingsfasen saknade jag en formell metod för
+utveckling. Det var Ibland svårt att överblicka hur långt jag kommit
+i implementationen av systemet och lade tidvis ned för mycket tid på
+att putsa på vissa
+mindre viktiga delar av systemet.
+
+Min plan att använda en prioriterad lista med lösningar på problem som
+skulle lösas i arbetet fungerade inte väl i praktiken. Lösningarna i
+planen var dåligt definierade och kunde inte användas som måttstock
+för att avgöra om ett specifikt problem var löst. Jag använde istället
+kravspecifikationen för att avgöra detta.
+
+
+\section{Framtida arbete}
+Systemet som implementerades i detta arbete kan användas som en grund för att vidareutveckla 
+ett mer komplett system för interaktiv visualisering av IP-nätverk.
+Systemets källkod innehåller många exempel på hur det kan byggas ut med nya funktioner.
+Arbetet som var av explorativ art kan också ses som en förstudie för ett större projekt där detta system 
+fungerar som en del i ett större system.
+
+Nedan beskriver jag de områden som arbetet ej berörde och
+begränsningar som behöver tas i akt vid eventuell vidareutveckling av systemet.
+
+\subsection{Kompabilitet med fler webbläsare}
+Systemet är idag utvecklat för Firefox version 3.5 eller senare. 
+Systemet fungerar även bra i Opera version 10 men inte alls i Internet Explorer.
+Om användaren inte ska tvingas att använda vissa utvalda webbläsare måste systemet
+göras mer flexibelt så att det fungerar lika bra eller åtminstone acceptabelt i alla de stora webbläsarna.
+Framförallt måste hanteringen av asynkrona anrop göras om då implementationen av objekt med samma 
+funktionalitet som XMLHttpRequest kan skilja sig åt mellan webbläsare.
+
+
+\subsection{Utveckling av funktionsmenyn}
+Funktionsmenyn är något begränsad vad gäller flexibilitet.
+Det är inte tillräckligt enkelt att låta menyn fyllas med ett godtyckligt antal funktioner då
+den saknar funktionalitet för att dynamiskt positionera text.
+
+Menyn visas alltid högst upp i dokumentet. 
+Om en användare förstorar och flyttar dokumentet i webbläsarfönstret är det möjligt 
+att den inte syns.
+Det vore önskvärt att funktionsmenyn automatiskt skulle flyttas till webbläsarfönstrets övre kant
+när en användare flyttar dokumentet i det.
+Automatisk flyttning av funktionsmenyn skulle kunna lösas genom att i
+JavaScript definiera funktioner som lyssnar efter händelserna musklick
+och förflyttning av SVG-dokumentet i webbläsaren. När dokumentet
+flyttas i webbläsarfönstret ska funktionerna uppdatera
+funktionsfönstrets y-koordinat så att den har samma värde som
+y-koordinaten för den synliga delen av dokumentet.
+
+\subsection{Säkerhet}
+Anrop från klienten filtreras ej av de CGI-skript som tar emot dem på webbservern.
+Detta är en potentiell säkerhetslucka då en noggrant skriven URL eventuellt skulle kunna
+orsaka exekvering av godtyckliga program. % referens till detta i Beginning Perl
+Om känslig data transporteras mellan klient och server måste förbindelsen göras säker
+med tekniker som till exempel TLS\footnote{Transport Layer Security}. % referens? http://datatracker.ietf.org/wg/tls/charter/
+
+\subsection{Sammankoppling med befintliga verktygsprogram}
+Systemet innehåller ingen koppling till befintliga verktygsprogram.
+Om systemet installeras i uppdragsgivarens interna nätverk är det
+möjligt att från CGI-skripten anropa verktygsprogrammen.
+
+
+\section{Egna erfarenheter}
+Innan detta arbete påbörjades hade jag väldigt liten erfarenhet av JavaScript, CSS, XML och XSLT.
+Under förstudien upptäckte jag att teknikerna var mycket
+väldokumenterade i olika böcker och framförallt på Internet.
+Det gick därför snabbt att skapa förståelse för området.
+
+I början av arbetet skapade jag en projektplan som innehöll en
+tidsplan med milstolpar.
+Projektplanen gjorde det möjligt att strukturera arbetet på ett bra
+sätt. En bra projektplan anser jag vara en förutsättning för ett lyckat projekt.
+Tidsplanen var ett mycket bra stöd under implementationen av systemet
+då jag enkelt kunde se hur jag låg till tidsmässigt.
+
+Under arbetets gång har jag fört journal. I journalen har jag antecknat
+referenser till bra källmaterial och de problem
+som uppstått under arbetets gång och olika alternativ för att lösa
+dessa. Journalen har fungerat bra som ett minnesstöd under skrivandet
+av denna rapport.
+
+Arbetet med implementeringen av systemet och framställandet av denna rapport har varit väldigt givande och 
+gett mig många erfarenheter som jag för med mig i framtida uppdrag och
+studier. 

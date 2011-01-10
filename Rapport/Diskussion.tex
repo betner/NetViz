@@ -1,0 +1,17 @@
+
+% Knyt ihop med verktygsprogram
+
+% Detta alternativ valdes framför lösningen med ett monolitiskt CGI-skript som
+% beskrevs i kapitel 3. På detta sätt blir systemet mer modulärt och tillägg av
+% fler verktygsprogram behöver ej påverka programkoden i de befintliga
+% CGI-skripten.
+% Referera till coherency och coupling i PUM kanske, eller designmönster boken
+
+% De CGI-skript som ska utföra verktygsprogram är i prototypsystemet
+% mycket enkla och begränsade. Detta beror på att källkoden till de
+% verktygsprogram beställaren utvecklat innehåller känslig information
+% och har ombetts att hållas hemlig. Därför anropar inget av de
+% CGI-skript omnämnda i denna rapport något verktygsprogram utan får ses
+% som demonstrationer på hur systemet kan utföra godtyckliga program på
+% klientens vägnar.
+%En annan fördel är att det är lättare att felsöka, fel på ett program betyder inte fel i alla

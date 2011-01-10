@@ -1,0 +1,100 @@
+% skriv tydligare med aktiva verbformer vad som var givet och vad
+% som kommit fram under arbetet. Kom de fram under preliminär analys
+% eller slutlig analys?
+% Förklara frivilliga och obligatoriska krav.
+
+De krav som listas i detta kapitel framkom under arbetets tidiga fas.
+När arbetet var definierat av uppdragsgivaren fanns några
+grundläggande krav, nämligen att systemet skulle använda SVG-dokument
+för den grafiska representationen, att dessa skulle visas i
+webbläsaren Firefox och att dokumentet skulle göras interaktivt genom
+JavaScript.
+Efter att jag genomfört en preliminär analys diskuterade jag med
+uppdragsgivaren vilka tekniker som var godtagbara att använda i
+systemet.
+När de grundläggande kraven ovan var bestämda tog slutligen jag och
+uppdragsgivaren fram de funktionella krav som skulle ställas på systemet. 
+
+Jag valde att dela upp de olika kraven i två kategorier så att jag
+kunde fokusera på de viktigaste kraven först. Detta gjorde på grund av
+att implementationsfasen av systemet skedde under en väldigt begränsad
+tidsperiod och eftersom jag ej genomfört ett liknande arbete tidigare
+var det svårt att uppskatta den faktiska tidsåtgången för att lösa
+varje problem.
+De viktigaste kraven klassificerades som obligatoriska och skulle uppfyllas för att
+arbetet ska anses vara helt slutfört.
+De mindre kritiska kraven klassificerades som  frivilliga och skulle uppfyllas i mån
+av tid.
+
+Varje krav har ett ID-nummer och de är ej sorterade i prioritetsordning.
+
+\section{Obligatoriska krav}
+\begin{description}
+  \item[K1] Mjukvarupaketet GraphViz ska användas för att generera SVG-dokument.
+  \item[K2] Den grafiska representationen ska vara i formatet SVG.
+  \item[K3] Applikationer på serversidan ska vara av typen CGI-skript skrivna i 
+    programmeringsspråket Perl.
+  \item[K4] Applikationer på klientsidan ska vara skrivna i 
+    programmeringsspråket JavaScript.
+  \item[K5] Webservern som används i systemet ska vara LightTPD.
+  \item[K6] Systemet ska stödja webläsaren Firefox version 3.5 eller senare.
+  \item[K7] Ett befintligt verktygsprogram ska kunna anropas via användarinteraktion
+    med SVG-dokument i webläsaren.
+  \item[K8] Anrop enligt krav K7 ska ske asynkront.
+  \item[K9] Resultatet av körningen av verktygsprogrammet ska visas i
+    den webläsare där anropet initierades.
+  \item[K10] Interaktion med SVG-dokument på klientsidan ska ej påverka 
+    originaldokumentet på serversidan.
+  \item[K11] Alla komponenter i systemet ska använda öppen mjukvara.
+\end{description}
+
+\section{Frivilliga krav}
+\begin{description}
+  \item[F1] När en användare högklickar på ett element i SVG-dokumentet ska en lista
+    med tillgängliga funktioner visas.
+  \item[F2] Listan i krav F1 ska genereras baserat på elementets identifierare.
+  \item[F3] Systemet ska innehålla funktionalitet för att automatiskt anropa ett
+    verktygsprogram baserat på en timer.
+\end{description}
+
+\section{Testning av krav}
+\label{sect:test_av_krav}
+\begin{description}
+  \item Uppfyllande av krav K1, K2, K3, K4,
+    K5 och K11 testas genom att undersöka de ingående 
+    komponenterna.
+  \item[K6] Utför de tillgängliga funktionerna i klientsidans
+    gränssnitt i Firefox version 3.5 och version 3.6. Granska om
+    SVG-dokumentet renderas korrekt i webläsaren.
+  \item[K7] Utför funktion på klientsidan och notera resultatet. Utför
+    verktygsprogrammet manuellt och jämför resultaten. Detta
+    förutsätter att verktygsprogrammet är deterministiskt.
+  \item[K8] Undersök programmets källkod på klientsidan.
+  \item[K9] Utför funktion i webläsaren och notera om resultat visas
+    efter körning.
+  \item[K10] Utför de tillgängliga funktionerna på
+    klientsidan. Kontrollera att originaldokumentet på servern är
+    oförändrat.
+  \item[F1] Högerklicka på element i dokumentet och notera vilka
+    funktioner som listas. Jämför denna lista med de funktioner som
+    gjorts tillgängliga för elementet i källkoden på klientsidan.
+  \item[F2] Undersök källkod på klientsidan för att se om elementets
+    identifierare används för att generera listan med tillgängliga funktioner.
+  \item[F3] Starta timer och kontrollera att verktygsprogram anropas
+    genom att skapa spårutskrifter på serversidan.
+\end{description}
+
+\section{Sammanfattning}
+Framställandet av kravspecifikationen var en mycket viktig del av
+arbetet. Genom att ha regelbundna diskussioner med min handledare
+under arbetets tidiga faser kunde jag snabbt förkasta vissa idéer och fokusera mer
+på andra. Arbetet med kravspecifikationen skedde
+parallellt med problemanalysen och litteraturstudien och fungerade som
+ett hjälpmedel för att avgränsa och precisera vad som skulle
+genomföras under arbetet med systemet.
+Jag valde att dela upp kravspecifikationen i två delar där den första
+berör obligatoriska krav som ska uppfyllas och den andra berör
+frivilliga krav som ska uppfyllas i mån av tid.
+
+I nästa kapitel ges en kort orientering av de olika tekniker jag
+valde att använda, baserat på kravspecifikationen och litteraturstudien.

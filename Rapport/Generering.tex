@@ -1,0 +1,153 @@
+
+\section{Generering av SVG-dokument}
+\label{sect:generering}
+Klienten kan göra en förfrågan till servern att leverera ett interaktivt SVG-dokument.
+Förfrågan görs genom att ange en URL på formen \\ 
+\url{http://värdnamn.domän/cgi-bin/showNetwork.pl?network=namn.svg}.
+Sekvensdiagrammet i figur \vref{fig:sekvens-svg} visar hur i detalj
+hur genereringen går till.
+
+\subsection{Förfrågan från klient}
+Generering av SVG-dokument sker genom att anropa ett CGI-skript på
+servern. Dokumentet returneras till klienten som begär att få de filer
+som är refererade i det.
+
+\begin{figure}[hbt]
+\begin{center}
+\includegraphics[width=\textwidth]{figurer/sekvensvy-showNetwork.pdf}
+\end{center}
+\caption{Sekvensdiagram över begäran av SVG-dokument}
+\label{fig:sekvens-svg}
+ \end{figure}
+
+\subsection{Behandlande av förfrågan}
+CGI-skriptet \emph{showNetwork.pl} tar emot klientens förfrågan om att
+visa en nätverkskarta och genererar ett nytt, berikat SVG-dokument. 
+Den del i CGI-skriptet som utför transformationen och returnerar det
+resulterande dokumentet visas i listning \vref{lst:cgi-trans}.
+
+\lstset{language=Perl}
+\begin{lstlisting}[float=htp, caption={XSL-transformation}, label=lst:cgi-trans]
+  my $parser = XML::LibXML->new();
+  my $xslt   = XML::LibXSLT->new();
+
+  my $source    = $parser->parse_file( $svg_file );
+  my $style_doc = $parser->parse_file( $xsl_file );
+
+  my $stylesheet = $xslt->parse_stylesheet( $style_doc );
+
+  my $result = $stylesheet->transform( $source );
+
+  print $cgi->header( "image/svg+xml" );
+  print $stylesheet->output_string( $result ); 
+
+\end{lstlisting} %$
+
+% Kommentarer till koden?
+
+
+\section{XSL transformation}
+\label{sect:xsl_trans}
+CGI-skriptet showNetwork.pl tar emot en förfrågan om att berika ett SVG-dokument. 
+% Skriptet använder sig av det öppna Perlbiblioteket XML::LibXSLT och
+% formatmallsfilen \emph{svgAddBindings.xsl}.
+% Genom att skapa ett nytt dokument med bindningar och referenser till
+% JavaScript lämnas originaldokumenten orörda. 
+% Fördelen med denna lösning är att de kan användas i andra tillämpningar som kan ha helt andra förutsättningar än detta system.
+%behöver man nämna prestanda och nackdelar med att de genereras varje gång?
+
+% Berikning av det efterfrågade SVG-dokumentet sker med hjälp av XSL
+% transformation. För detta används det öppna Perlbiblioteket
+% \emph{XML::LibXSLT]. 
+
+Formatmallsfilen \emph{svgAddBindings.xsl} innehåller regler för hur
+dokumentet ska transformeras. 
+De viktigaste transformationerna är kopiering av element, referenser
+till JavaScript-filer och bindningar mellan händelser och funktioner.
+
+\subsection{Identitetstransformation}
+För att det nya berikade dokumentet ska innehålla all
+information från ursprungsdokumentet måste alla element och dess
+attribut kopieras. 
+Detta görs genom att applicera en så kallad
+identitetstransformation som visas i listning \vref{lst:xslt-ident}.
+
+\begin{lstlisting}[float=htp, caption={Identitetstransformation}, label=lst:xslt-ident]
+<xsl:template match="@*|node()">
+  <xsl:copy>
+    <xsl:apply-templates select="@*|node()"/>
+  </xsl:copy>
+</xsl:template>
+\end{lstlisting}
+
+\subsection{Tillägg av referenser till JavaScript-filer}
+Roten i dokumentet är ett SVG-element. En bindning till en
+\emph{onload}-händelse görs i elementets attributlista. Detta möjliggör
+anrop till en JavaScript-funktion när dokumentet laddats färdigt.
+Befintliga attribut kopieras.
+Referenser till JavaScript-filer görs genom att skapa script-element
+innehållande sökvägar till dessa. 
+Notera att olika namnrymder måste användas då olika typer av
+XML-element används i formatmallen.
+%\begin{lstlisting}[float=htp, caption={Tillägg av referenser till
+%JavaScript}, label=xslt-jsref-kod]
+
+Listning \vref{lst:xslt-ref} visar hur referenser läggs till.
+
+\lstset{language=XSLT}
+\begin{lstlisting}[float=htp, caption={Skapa referenser genom XSLT}, label=lst:xslt-ref]
+<xsl:template match="/svg:svg">
+  <xsl:copy>
+    <xsl:copy-of select="@*" />
+    <xsl:attribute name="onload">
+        svg_onload(evt)
+    </xsl:attribute> 
+    <svg:script type="text/ecmascript" xlink:href="../script/base.js" />
+    <svg:script type="text/ecmascript" xlink:href="../script/gui.js" />
+    <svg:script type="text/ecmascript" xlink:href="../script/ext.js" />
+    <xsl:apply-templates />
+  </xsl:copy>
+</xsl:template>
+\end{lstlisting}
+
+\subsection{Bindning av JavaScript-funktioner}
+Det ursprungliga SVG-dokumentet innehåller två klasser av element som
+är intressanta för användaren att interagera med. Dessa är klassen
+\emph{nod} som representerar en nod i nätverket som till
+exempel en IP-router och klassen \emph{edge} som representerar en
+förbindelse mellan två noder i nätverket.
+Bindningar ska skapas för dessa två klasser.
+De händelser som jag valt att skapa bindningar till är \emph{onclick}, \emph{onmouseover} och
+\emph{onmouseout} vilka är en delmängd av de befintliga
+mus-händelserna i DOM level 2. %ref till svg 10 ref, Kursivera DOM?
+Listning \vref{lst:xslt-jsbind} visar hur bindningen genomförs.
+
+\begin{lstlisting}[float=htp, caption={Bindning av JavaScript-funktioner}, label=lst:xslt-jsbind]
+<xsl:template match="svg:g">
+  <xsl:copy>
+    <xsl:if test="@class='node'">
+      <xsl:attribute name="onclick">
+          node_onclick(evt)
+      </xsl:attribute>
+      <xsl:attribute name="onmouseover">
+          node_onmouseover(evt)
+      </xsl:attribute>
+      <xsl:attribute name="onmouseout">
+          node_onmouseout(evt)
+      </xsl:attribute>
+    </xsl:if>
+    <xsl:if test="@class='edge'">
+      <xsl:attribute name="onclick">
+          edge_onclick(evt)
+      </xsl:attribute>
+      <xsl:attribute name="onmouseover">
+          edge_onmouseover(evt)
+      </xsl:attribute>
+      <xsl:attribute name="onmouseout">
+          edge_onmouseout(evt)
+      </xsl:attribute>
+    </xsl:if>
+    <xsl:apply-templates select="@*|node()" />
+  </xsl:copy>
+</xsl:template>
+\end{lstlisting}

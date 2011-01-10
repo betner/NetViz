@@ -1,0 +1,204 @@
+
+Jag har valt att bryta ned problemet med att göra en interaktiv och grafisk representation av ett IP-nätverk
+i en webbläsare i fyra mindre delproblem.
+De två första delproblemen berör klientdelen i systemet och de två
+sista berör även serverdelen:
+
+\begin{itemize}
+\item Det första delproblemet är att göra ett SVG-dokument
+interaktivt. Det ska programmatiskt gå att förändra innehållet i
+nätverkskartan och visa information i denna baserat på en användares
+handlingar. 
+För detta krävs bindningar mellan element i dokumentet och
+JavaScript-funktioner.
+
+\item Det andra delproblemet som måste lösas är hur användarinitierade
+händelser i dokumentet såsom musklick ska fångas upp och behandlas av
+klienten.
+
+\item Det tredje delproblemet berör kommunikation mellan klient och
+server. Klienten ska anropa servern när en användare valt att utföra en
+funktion på ett av elementen i nätverkskartan.
+
+\item Det fjärde och sista delproblemet är hur anropen från klienten till
+servern ska behandlas.
+\end{itemize}
+
+De fyra delproblemen och de alternativa lösningar jag funnit till dessa behandlas nedan.
+
+\section{Bindning av JavaScript-funktioner} % Beskriv vad detta
+                                % innebär i kontexten för arbetet
+För att göra nätverkskartan i ett SVG-dokument interaktiv, måste det skapas bindningar till
+funktioner som utförs baserat på vilka händelser användare utlöst i
+webbläsaren. 
+
+Elementen i ett SVG-dokument kan kopplas till händelser i en webbläsare
+genom att göra tillägg i deras attributlistor. 
+Attributen för dessa händelser kan referera till
+JavaScript-funktioner. 
+En händelse binds till en funktion via ett element\cite{StLaurent:svg_essentials:attribute}. 
+
+Om JavaScript-funktionerna inte ska definieras i SVG-dokumentet måste
+det finnas referenser i form av script-element\cite{w3c:svg:script} till JavaScript-filer innehållande dessa definitioner.
+
+Jag har identifierat fyra olika metoder för att skapa bindningar mellan händelser och
+JavaScript-funktioner.
+
+\subsection{Traversering av SVG-DOM i webbläsare}
+När ett SVG-dokument har analyserats av en webbläsare kan tillägg göras
+till dokumentets element genom att använda JavaScript och DOM-gränssnittet\cite{w3c:dom2:ecma}. 
+På detta sätt kan bindningar av händelser ske på klientsidan. 
+
+SVG-dokumentet i fråga måste innehålla en referens till en fil som
+innehåller den JavaScript-funktion som utför tilläggen. 
+En sådan referens skapas genom att lägga till ett script-element i
+dokumentet. % referens finns under rubriken ovan w3c:svg:script
+
+\subsection{Traversering av SVG-dokument på servern}
+Ett SVG-dokument kan analyseras och tillägg göras i dess element på serversidan genom
+att använda ett bibliotek som implementerar DOM. 
+CPAN\footnote{Comprehensive Perl Archive Network. En stor samling
+  mjukvara och dokumentation för Perl.  Se http://www.cpan.org/}
+ innehåller flera Perlbibliotek som tillhandahåller denna funktionalitet.
+
+När bindningarna genomförts går det ej att ändra dem utan direkt 
+manipulation av dokumentet.
+
+\subsection{Transformation av SVG-dokument genom XSLT}
+XML-dokument kan transformeras med XSLT.
+Genom att använda en XSL-transformerare kan ett SVG-dokument
+analyseras och ändras baserat på regler som definierats i en
+XSL-formatmall.
+Det är möjligt att lägga till, ta bort och ändra attribut i ett dokument. 
+Förutom att berika dokumentet med bindningar till JavaScript-funktioner kan referenser till
+JavaScript-filer och CSS-filer läggas till.
+
+XSLT stöds av de populäraste webbläsarna: Internet
+Explorer\cite{microsoft:xslt}, Mozilla Firefox\cite{gecko:xslt},
+Opera\cite{opera:xslt} och de som är baserade på
+WebKit\cite{webkit:xslt}.
+Transformation kan således ske på klientsidan och kräver att en referens till XSL-formatmallen läggs till i dokumentet.
+
+Fristående XSL-transformerare kan exekveras på serversidan. 
+Källdokumentet och XSL-formatmallen kan anges som
+parametrar till XSL-transformeraren och en referens behöver inte
+läggas till i dokumentet.
+
+Två populära XSL-transformerare som är tillgängliga som öppen
+mjukvara är Xalan och libxslt.
+
+\subsubsection{Apache Xalan}
+Apache projektets XSL-transformerare Xalan\cite{apache:xalan} finns tillgänglig som 
+Javaprogram. 
+Xalan kan anropas från ett Perlprogram.
+
+\subsubsection{XML::LibXSLT}
+LibXSLT\cite{Pajas:libxslt-perl} är ett Perlbibliotek som omsluter GNOME-projektets
+XSL-transformerare libxslt\cite{Veillard:libxslt}.
+LibXSLT går att använda i ett Perlprogram genom att inkludera det i källkoden.
+
+
+\subsection{Skapa bindning till funktioner i GraphViz
+  konfigurationsfil}
+GraphViz konfigurationsfil för en graf styr hur ett
+SVG-dokument ska utformas.
+Det går att ange att givna element ska innehålla länkattribut.
+
+Bindningar kan skapas genom att låta länkattributen referera till
+JavaScript-funktioner.
+Detta innebär dock en begränsning då endast en händelse som avfyras
+när användaren väljer att exekvera en länk, kan bindas till JavaScript-funktioner.
+
+\section{Hantering av användarinitierade händelser}
+\label{sect:händelser}
+En användare interagerar med nätverkskartan i SVG-dokumentet genom att
+klicka på noder och bågar i det. Ett musklick på ett element i
+dokumentet är en händelse som ska anropa en JavaScript-funktion.
+
+Standarden för SVG-DOM\cite{w3c:svg:dom} definierar en mängd händelser som kan bindas till anrop av
+JavaScript-funktioner. 
+Varje händelse som är definierad i elementens attributlistor kan
+bindas till en JavaScript-funktion.
+
+För att en mängd olika funktioner ska kunna bindas till en given
+händelse i ett element kan en expedieringsfunktion behandla
+funktionsanropet och utföra ett godtyckligt antal funktioner i
+sekvens. Expedieringsfunktionerna bildar en abstraktion mellan
+händelser i SVG-dokumentet och de funktioner som ska utföras när dessa
+utlöses.
+Expedieringsfunktionerna kan senare utökas med fler funktioner utan
+att förändra programkoden i den.
+
+Ett alternativ till att använda expedieringsfunktioner är att
+definiera en funktion för varje enskilt element och händelse i
+SVG-dokumentet. En nackdel med denna lösning är att när kopplingen mellan
+en given händelse och en funktion skapas så är det svårt att senare
+göra utökningar av funktionen. Utökningar av funktionen kräver att
+programkoden i den ändras.
+
+
+\section{Anrop från klient till server}
+\label{sect:anrop}
+När en användare klickat på en förbindelse eller nätverkselement i
+nätverkskartan ska en given åtgärd utföras. Detta kan till exempel
+vara att visa minnesanvändningen i en router. Begäran att visa denna
+information ska skickas till servern.
+
+Enligt kravspecifikationen ska begäran att utföra ett program på servern ske asynkront
+så att klienten inte är låst under tiden som servern utför programmet.
+Asynkrona anrop kan göras genom att utnyttja JavaScript-objektet XMLHttpRequest
+i webbläsaren Firefox. 
+W3C:s nuvarande specifikation\cite{w3c:xhr} av XMLHttpRequest har en begränsning i att anrop enbart får ske till
+samma värdnamn som angetts vid begäran av det aktuella dokumentet.
+W3C har producerat ett arbetsutkast\cite{w3c:xhr:cross_site} där denna begränsning tagits
+bort. 
+Firefox har sedan version 3.5 implementerat ett XMLHttpRequest-objekt som inte har denna begränsning\cite{mdc:xhr:cross_site}.
+
+Ett alternativ till XMLHttpRequest är att skapa ett
+nytt script-element i dokumentet där sökvägen till skriptet pekar
+på ett CGI-skript \cite{Levitt:ajax-harmful}.
+Detta CGI-skript returnerar ett JavaScript-program som kan innehålla
+funktioner och data som vid analys lägger till nya element och
+textnoder i dokumentet.
+Denna lösning begränsas inte av att kommunikationen måste ske mot samma
+server som levererat det aktuella dokumentet. 
+
+
+\section{Behandling av anrop från klient}
+När en begäran att utföra ett program eller visa information rörande
+en nätverksnod eller förbindelse mottagits av servern ska denna
+behandla anropet och leverera resultatet av begäran till klienten.
+Två generella lösningar för hur detta ska ske har identifierats.
+
+\subsection{Monolitiskt CGI-skript}
+Ett CGI-skript ansvarar för att behandla klientens anrop.
+Skriptet innehåller en expedieringsfunktion som baserat på parametrar i anropet
+utför önskat program. 
+
+Tillägg av nya program som systemet ska stödja kräver att
+ändringar sker i de JavaScript-program som utförs på klientsidan och i
+expedieringsfunktionen i CGI-skriptet.
+
+\subsection{CGI-skript som agerar skalprogram}
+För varje program i systemet som klienten kan anropa finns ett
+CGI-skript som agerar skalprogram. Det behandlar klientens
+anrop och utför önskat program.
+
+Utökning av tillgängliga program i systemet kräver ändringar i det JavaScript-program som
+utförs på klientsidan och att ett nytt CGI-skript skapas för att hantera anropet
+från klienten.
+Befintliga CGI-skript på serversidan behöver ej ändras.
+
+
+\section{Sammanfattning}
+I detta kapitel har jag visat hur jag valt att dela upp problemet att
+skapa en interaktiv visualisering av ett IP-nätverk i fyra delproblem.
+De två första delproblemen berör, på klientdelen av systemet, kopplingar mellan användarinitierade händelser
+i ett SVG-dokument och JavaScript-funktioner och hur händelserna ska
+hanteras.
+De två övriga delproblemen berör även serverdelen av
+systemet, nämligen hur anrop från en klient till servern ska ske och
+hur anropen ska behandlas av servern.
+
+Nästa kapitel visar implementationen av ett system för
+nätverksvisualisering baserat på analysen jag genomförde i detta kapitel.

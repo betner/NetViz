@@ -1,0 +1,227 @@
+
+
+\section{Bakgrund}
+Telenor\cite{Telenor:om} i Sverige är en av landets största leverantörer av
+kommunikation via mobil- och fast telefoni och är
+med köpet av Bredbandsbolaget\cite{Bredbandsbolaget:om}, Sveriges näst största
+bredbandsleverantör.
+
+Övervakning och drift av Telenors IP- och mobiltelefoninät i Sverige görs av Telenor
+NOC\footnote{Network Operations Center} som är belägen i Karlskoga.
+
+
+Övervakning av nätverken innebär att operatörerna på NOC tar emot larm från
+utrustning i dessa. Larmen kommer från ett flertal olika leverantörers
+övervakningssystem.
+Operatörerna tar även emot felanmälningar via telefon, e-post och
+ärendehanteringssystem.
+
+Drift av nätverken innebär att operatörerna reagerar på ovan nämnda
+larm och felanmälningar och ansvarar för att defekter åtgärdas
+antingen av operatören själv eller av en lämplig tekniker.
+
+De senaste åren har det på Telenor utvecklats flertal verktygsprogram för att
+underlätta operatörernas dagliga arbete. Exempel på dessa är program som 
+rapporterar hur många kunder som är inkopplade mot en viss nätverksnod, hur 
+många noder det finns i en viss stad och hur många av dem som är kontaktbara.
+De flesta av verktygsprogrammen är UNIX-baserade program skrivna i programmeringsspråken  
+Python, Perl och Bash och anropas via ett kommandoskal i UNIX.
+
+
+\section{Existerande system}
+\subsection*{Visualisering av IP-nätverk} 
+Telenor NOC har tillgång till nätverkskartor som visar viktiga delar av IP-nätverket.
+Denna dokumentation utgörs av dokument i olika filformat men gemensamt för dessa är att de ej är
+dynamiska eller interaktiva; det saknas koppling mellan
+element i dokumenten och motsvarande nod i IP-nätverket.
+
+\subsection*{Verktygsprogram}
+Nätverkstekniker på Telenor har utvecklat ett flertal verktygsprogram.
+Dessa program är skapta att köras i ett kommandoskal.
+Varje program har egna förutsättningar och begränsningar vilket
+betyder att användaren måste känna till vilka parametrar dessa
+använder och vilka krav som måste uppfyllas innan exekvering.
+
+
+\section{Problem}
+% Varför SVG? Vad är problemet och varför vill man lösa det så här?
+Telenors IP-nätverk (fortsättningsvis kallat nätverket) är omfattande och innehåller många förbindelser
+mellan noderna i det. Varje nod i nätverket innehåller åtminstone ett tiotal
+förbindelser, redundanta och icke redundanta, till andra noder.
+Det är därför svårt att bilda en mental modell över nätverket.
+När ett larm rörande en bruten förbindelse eller att kontakten
+förlorats med en nod i nätverket inkommer till Telenor NOC är det ofta
+svårt att förstå hur problemet påverkar nätverket. 
+Ett larm är vanligtvis stämplat med en identifierare för den aktuella noden och om
+det rör en förbindelse även ett indexnummer för den port förbindelsen
+är kopplad till.
+
+% Ska detta stå här eller i motiveringen?
+% Med en grafisk representation av nätverket är det lättare att få en
+% övergripande 
+% bild och direkt se vilka noder och förbindelser som påverkas.
+
+%arbetsflödet, givet program, leta reda på noden, var hittar man den?
+% Ett vanligt arbetsflöde på Telenor NOC är att givet en nod i nätverket
+% utföra ett verktygsprogram som till exempel listar antalet anslutna kunder för
+% att kunna avgöra hur omfattande en driftstörning skulle vara om den
+% aktuella noden skulle gå ner.
+En vanlig uppgift på Telenor NOC är att uppskatta omfattningen av en
+driftstörning som uppstår då noder i nätverket går ner. Driftstörningar
+kan uppstå via oförutsedda händelser som till exempel strömavbrott
+eller planerade arbeten, exempelvis uppgradering av en nätverknods operativsystem.
+Det finns på Telenor NOC verktygsprogram som listar antalet anslutna
+kunder till en nod men den listan innehåller ej information om
+förbindelser till andra noder i nätverket. Konfigurationen för varje
+port i aktuell nod måste undersökas för att avgöra vilka andra noder den är
+ansluten till.
+
+
+\section{Motivering}
+En grafisk representation av nätverket ger operatörerna på Telenor NOC en övergripande bild över de
+komplexa kopplingar som existerar mellan noder i nätverket och de slipper skapa en
+mental modell över dessa.
+% Planjobb, lättare att se exakt påverkan?
+
+Telenor NOC har börjat undersöka vilka möjligheter det finns att visualisera delar av
+nätverket i ett SVG\footnote{Scalable Vector Graphics}-dokument och göra det interaktivt.
+Man vill också göra det möjligt för en användare att anropa externa
+program från dokumentet.
+
+Dokumentformatet SVG har valts av flera anledningar:
+
+\begin{itemize}
+\item SVG är ett XML\footnote{Extensible Markup
+    Language}-baserat dokumentformat och en fil i detta format är
+  tillgänglig i klartext. 
+  Dokumentet kan därför, till skillnad från binära format, enkelt analyseras av både
+  människor och program. Data i dokumenten är tillgängliga för
+  framtida användare och utvecklare.
+
+\item SVG är ett dokumentformat för webben. SVG-dokument är enkla att infoga i webbsidor och kan även
+  användas självständigt i en webbläsare. Ett system utvecklat för att
+  exekveras i en webbläsare kräver ingen installation eller
+  administration på en användares dator vilket minskar arbetet med att
+  underhålla det. Det finns även möjligheter att använda tillgängliga
+  webbtjänster som till exempel Google Maps\footnote{En webbaserad karttjänst.} för att öka
+  funktionaliteten i systemet.
+
+\item SVG-specifikationen innehåller bindningar till 
+  JavaScript och dokumenten kan därför göras interaktiva på samma sätt
+  som webbsidor i HTML-format. Ett SVG-dokument kan användas både som
+  en nätverkskarta och som användargränssnitt i en webbaserad applikation.
+
+\end{itemize}
+
+% SVG har valts på grund av att det är en öppen specifikation och
+% baserat på XML\footnote{Extensible Markup Language}.
+% SVG-dokumentens kod är tillgänglig i klartext och kan därför
+% till skillnad från dokument i binära format enkelt analyseras av både
+% människor och program, vilket innebär att datan i dokumenten finns
+% tillgängliga för framtida användare och utvecklare. 
+% SVG-dokument är enkla att infoga i webbsidor och kan även användas
+% självständigt i en webbläsare. Ett system som är utvecklat för att
+% exekveras i en webbläsare kräver ingen installation eller
+% administration på en användares dator vilket minskar arbetet med
+% att underhålla det.
+
+
+\section{Syfte}
+Syftet med detta arbete är att utveckla ett prototypsystem som gör nätverkskartor i formatet SVG interaktiva.
+Det ska vara möjligt att via nätverkskartorna anropa befintliga verktygsprogram.
+
+
+\section{Avgränsningar}
+Beställaren har beslutat att använda visualiseringsmjukvaran GraphViz för att generera 
+nätverkskartor i formatet SVG. Systemet behöver ej innehålla funktionalitet för att 
+skapa konfigurationsfiler till GraphViz baserat på befintlig topologi av 
+nätverket. Systemet behöver ej generera dessa nätverkskartor.
+
+Den del av systemet som exekveras på klientsidan ska vara väl fungerande i 
+webläsaren Firefox. Stöd för fler webläsare är ej nödvändigt.
+
+Arbetets huvudsakliga syfte är att undersöka hur element i ett SVG-dokument kan
+kopplas till ett verktygsprogram. Det är därför ej nödvändigt att göra en 
+komplett matchning mellan alla befintliga verktygsprogram och vilka typer av
+system i nätverket dessa har stöd för.
+
+Frågor rörande säkerhet och tillgänglighet behöver ej besvaras.
+
+
+% i hela metoden:
+% gör om till aktiva verbformer i presens eller futurum + kom ihåg
+% hjälpverb (stryks ofta i tal och tidningstext men måste vara med i
+% rapporter)
+\section{Metod} % PRESENS?!?
+För att strukturera arbetet har jag valt att använda George Pólyas problemlösningsmetod\cite{Polya:solve}.
+Pólyas metod består av fyra steg för att strukturera arbetet med att
+lösa problem. Under varje punkt följer en beskrivning på hur jag
+applicerar metoden i mitt arbete.
+
+\subsection{Förstå problemet}
+För att förstå problemet som beställaren vill lösa ska jag genomföra
+informella, ostrukturerade intervjuer med min handledare på
+Telenor. Efter varje intervju ska de problem som identifierats
+analyseras och frågor som dyker upp i denna ska antecknas och användas
+i en uppföljande intervju.
+
+När inga frågor och oklarheter återstår ska jag i tätt samarbete med
+min handledare ta fram en kravspecifikation. Kravspecifikationen
+kommer sedan att användas för att avgränsa arbetet och göra de möjligt
+för beställaren och mig att avgöra om arbetets mål har uppfyllts.
+
+Nyckelord i kravspecifikationen kommer att användas som stöd när jag
+tar fram en litteraturbas. Mitt mål med litteraturstudien är att skapa en förståelse för området och ge en uppfattning om
+vilka tekniker som kan användas för att lösa de problem som
+identifieras genom de ovan nämnda intervjuerna.
+
+\subsection{Skapa en plan}
+Baserat på den teori jag tillskansar mig genom litteraturstudien ska
+jag ta fram olika lösningsalternativ till de problem som jag
+identifierat.
+De lösningsalternativ jag anser uppfylla beställarens krav bäst och
+som är enklast att implementera kommer att väljas.
+
+En lista kommer att upprättas av mig som innehåller de
+valda lösningarna. Listans ordning ska baseras på hur viktigt varje
+problem är att lösa. Varje punkt i listan ska sedan brytas ned till
+mindre delproblem.
+
+\subsection{Utföra planen}
+Jag ska bearbeta listan med lösningar sekventiellt och implementera
+dessa i ett prototypsystem.
+
+Programutvecklingen kommer inte följa en formell metod utan vara av en
+explorativ art. Utvecklingen av systemet ska ske i små iterationer där
+fler och fler funktioner läggs till och testas kontinuerligt. 
+
+\subsection{Utvärdera resultatet}
+När jag anser att systemet uppfyller beställarens krav ska det testas
+enligt kravspecifikationen. 
+
+
+\section{Rapportens disposition}
+
+\begin{itemize}
+\item Det andra kapitlet innehåller en kravspecifikation som tagits
+  fram av författaren och uppdragsgivaren.
+\item I rapportens tredje kapitel ges en teoretiskt grund för de begrepp och tekniker som används i arbetet.
+\item Kapitel fyra redovisar de olika designval som jag identifierade baserat på kravspecifikationen och den teori som tillskansats under litteraturstudien.
+\item I det femte kapitlet beskrivs implementationen av ett prototypsystem. 
+  En systemöversikt ges först genom tre systemvyer följt av en djupare genomgång av systemets viktigaste komponenter.
+\item Arbetets resultat visas i kapitel sex. I kapitlet utvärderas
+  systemet mot kravspecifikationen och det avslutas med en sammanfattande diskussion.
+\item I kapitel sju som avslutar denna rapport för jag en diskussion
+  om arbetet och ger förslag på framtida förbättringar av systemet.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+

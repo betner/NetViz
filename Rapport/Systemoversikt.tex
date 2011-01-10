@@ -1,0 +1,245 @@
+I detta kapitel visas den systemarkitektur jag skapat baserat på
+kravspecifikationen och de designval som jag identifierade i min analys i
+föregående kapitel.
+Arkitekturen beskrivs med hjälp av tre systemvyer:
+exekveringsvy, implementationsvy och driftsättningsvy.
+De viktigaste komponenterna i systemet beskrivs sedan djupare.
+
+
+\section{Exekveringsvy}
+Exekveringsvyn i figur \vref{exekveringsvy} visar systemets
+övergripande arkitektur och relationen mellan dess komponenter under
+exekvering.
+Komponenterna kommer att beskrivas i detalj nedan.
+
+\begin{figure}[!hbt]
+\begin{center}
+\includegraphics[width=\textwidth]{figurer/exekveringsvy.pdf}
+\end{center}
+\caption{Exekveringsvy}
+\label{exekveringsvy}
+ \end{figure}
+
+\subsubsection{Webbläsare}
+Systemet stödjer endast webbläsaren Firefox version 3.5 eller senare.
+Inga insticksprogram eller andra modifikationer krävs för att systemet ska
+fungera som avsett.
+
+\subsubsection{Webbserver}
+Systemet använder en standardinstallation av webbservern LightTPD.
+
+\subsubsection{JavaScript-bibliotek}
+Ett bibliotek med JavaScript-filer innehåller all funktionalitet som systemet
+kräver på klientsidan.
+Det SVG-dokument som genererats av webservern innehåller referenser
+till nämnda JavaScript-filer som hämtas automatiskt av webläsaren när dokumentet analyseras.
+
+\subsubsection{CSS-stilmallar}
+Det genererade SVG-dokumentets utseende styrs till viss
+grad av stilmallar.
+
+\subsubsection{CGI-skriptbibliotek}
+Generering av berikade SVG-dokument och kopplingar till externa program sker via anrop 
+till CGI-skript programmerade i Perl.
+
+Varje externt program hanteras av ett specifikt CGI-skript.
+
+
+\subsubsection{XSL-processor}
+Ett CGI-skript berikar ett SVG-dokument vid förfrågan. 
+Detta innebär att det ursprungliga dokumentet lämnas oberört och kan användas
+i andra tillämpningar.
+
+Systemet använder XSL-processorn libxslt genom biblioteket
+XML::LibXSLT.
+% Systemets XSL-processor använder det öppna Perlbiblioteket XML::LibXSLT som
+% fungerar som ett skal runt GNOME-projektets C-bibliotek libxslt.
+
+\subsubsection{XSL-formatmall}
+XSL-processorn använder sig av denna formatmall för att transformera det
+ursprungliga SVG-dokumentet och skapa bindningar mellan händelser och
+JavaScript-funktioner
+
+Formatmallen innehåller även regler för att skapa referenser till
+JavaScript-filer och CSS-stilmallar. %som klienten ska använda sig av.
+
+\subsubsection{SVG-dokument}
+Nätverkskartor i SVG-format skapas av ett externt program med hjälp av GraphViz.
+% SVG-dokument som innehåller en grafisk representation av ett IP-nätverk.
+% Dessa dokument skapas av ett externt program med hjälp av GraphViz.
+
+%\section{Implementationsvy}
+%Implementationsvyerna visar programkodsmodulernas viktigaste
+%beståndsdelar och hur dessa är relaterade.
+% Implementationsvyerna visar hur programkodsmodulerna är relaterade och
+% deras viktigaste delar i form av objekt, funktioner och konstanter.
+
+\section{Implementationsvy över JavaScript-bibliotek}
+JavaScript-biblioteket består av filer som hanterar systemets logik på klientsidan.
+Filerna visas i figur \vref{impl-js} och kommer att beskrivas i detalj nedan.
+
+\begin{figure}[!hbtp]
+\begin{center}
+\includegraphics[width=\textwidth]{figurer/impl-js.pdf}
+\end{center}
+\caption{Implementationsvy över JavaScript-bibliotek}
+\label{impl-js}
+\end{figure}
+
+\subsection{Base.js}
+Filen \emph{base.js} innehåller de funktioner som är bundna till händelser i det
+berikade SVG-dokumentet och hjälpfunktioner som abstraherar delar av systemets
+underliggande implementation.
+Både \emph{gui.js} och \emph{ext.js} kräver att denna fil är exekverad innan de kan
+analyseras av webläsaren.
+
+\begin{itemize}
+\item \emph{Base} är ett namnrymdsobjekt som används för att skydda
+ konstanter och funktioner från namnkrockar då variabler är globala i
+ JavaScript.
+\item Konstanten \emph{svgRoot} håller en referens till SVG-dokumentets rot i DOM-trädet.
+\item \emph{SvgNS} innehåller XML-namnrymden för SVG och underlättar
+  vid namnrymdsspecifika funktionsanrop i DOM.
+ \item Funktionsobjektet \emph{dispatch} används för att hantera de
+   funktionsanrop som bundits till händelser i SVG-dokumentet och
+   tillåter att flera funktioner utförs givet en specifik händelse.
+\item Funktionsobjektet \emph{timedDispatch} innehåller metoder för att
+  lägga till och ta bort funktioner som är schemalagda att utföras i
+  ett givet intervall.
+\item Funktionen \emph{doPlainXHR} underlättar skapandet av asynkrona funktionsanrop
+  till webservern.
+\item \emph{GetEdgeElement} är en av flera funktioner som abstraherar den
+  underliggande representationen i systemet. Givet ett händelseobjekt
+  kan denna funktion ta fram det grafiska element som representerar en
+  båge i grafen.
+\item \emph{GetNodeElement} har samma funktionalitet som \emph{getEdgeElement}
+  förutom att det element som representerar en nod i grafen returneras.
+\end{itemize}
+
+\subsection{Gui.js}
+GUI står för graphic user interface vilket betyder grafiskt
+användargränssnitt.
+Denna JavaScript-fil innehåller funktioner kopplade till det grafiska gränssnittet.
+
+\begin{itemize}
+\item \emph{Gui} är ett namnrymdsobjekt med samma funktion som \emph{base} i \emph{base.js}.
+\item Funktionsobjektet \emph{functionMenu} innehåller metoder för att lägga
+  till verktygsprogram i en kontrollmeny som visas i SVG-dokumentet.
+\item  Funktionen \emph{createPopup} skapar en dialogruta i SVG-dokumentet.
+\item \emph{Fade} tonar ut eller in ett element i SVG-dokumentet
+  och används av \emph{createPopup} och \emph{functionMenu}.
+\item Funktionen \emph{stringToText} skapar en grupp innehållande ett
+  textelement och kan användas för att lägga till text i en dialogruta
+  i SVG-dokumentet.
+\item \emph{StringArrayToText} har samma funktionalitet som \emph{stringToText}
+  förutom att den kan skapa flera textelement givet ett objekt med strängar.
+\end{itemize}
+
+\subsection{Ext.js}
+Denna fil innehåller exempel på hur systemet kan programmeras med
+hjälp av de ovan nämnda filerna. 
+Utökande av ny funktionalitet till systemet bör göras i denna fil.
+
+\begin{itemize}
+\item \emph{MenuConfig} är ett objekt innehållande en konfiguration som
+  används vid skapandet av ett funktionsobjekt av typen \emph{functionMenu}.
+\item Funktionen \emph{hostToIP} anropar ett CGI-skript på webservern som returnerar
+  ip-adressen som är bunden till givet ett värdnamn.
+\item Funktionen \emph{showOpenTT} demonstrerar hur ett
+  verktygsprogram kan anropas utan hjälp av \emph{doPlainXHR} och visa
+  resultatet som ett HTML-dokument i ett nytt webläsarfönster. %utan att skapa en dialogruta med funktionen \emph{createPopup}.
+\item \emph{TimedEventTest} är ett exempel på hur \emph{timedDispatch} kan
+  utnyttjas för att en eller flera funktioner ska utföras regelbundet
+  och automatiskt.
+\item Funktionen \emph{getHW} anropar ett CGI-skript som returnerar information rörande
+  ett nätverkselements hårdvarubestyckning.
+\item \emph{PingNode} sänder en förfrågan till ett CGI-skript att
+  kontrollera om ett nätverkselement är åtkomlig via nätverket
+  webservern är kopplad till.
+\end{itemize}
+
+\section{Implementationsvy över CGI-skriptbibliotek} %LÄGG TILL INFO OM EXTERNT BIBLIOTEK
+                                %OCH ATT DET INSTALLERAS MED CPAN
+\label{sect:CGI-bibliotek}
+De komponenter som ingår i CGI-skriptbiblioteket och dess beroenden
+visas i figur \vref{impl-cgi} och beskrivs nedan.
+Samtliga CGI-skript är utvecklade i programmeringsspråket Perl.
+%De flesta CGI-skripten demonstrerar hur olika funktioner kan utföras
+%på webservern givet ett anrop från en JavaScript-funktion på
+%klientsidan.
+
+\begin{figure}[!hbtp]
+\begin{center}
+\includegraphics[width=\textwidth]{figurer/impl-cgi.pdf}
+\end{center}
+\caption{Implementationsvy över CGI-skriptbibliotek}
+\label{impl-cgi}
+\end{figure}
+
+
+\subsection{GetHWInfo.pl}
+CGI-skriptet \emph{getHWInfo.pl} hämtar information rörande ett nätverkselements
+hårdvarubestyckning givet ett värdnamn.
+
+\subsection{ShowOpenTT.pl}
+Programmet \emph{showOpenTT.pl} skapar ett HTML-dokument och returnerar det till
+klienten.
+
+\subsection{HostToIP.pl}
+Programmet \emph{hostToIP.pl} returnerar en IP-adress tillhörande ett givet värdnamn.
+
+\subsection{PingNode.pl}
+CGI-skriptet \emph{pingNode.pl} kontrollerar om ett nätverkselement kan nås via det nätverk
+webservern är ansluten till. 
+
+\subsection{ShowNetwork.pl}
+CGI-skriptet \emph{showNetwork.pl} utgör den viktigaste delen av systemet då det berikar
+ett SVG-dokument med bindningar och referenser. 
+
+Ett nytt dokument skapas baserat på ett SVG-dokument som transformeras med
+hjälp av XSLT och returneras till webservern som därefter skickar det
+till klienten. 
+
+XSL-transformationen kräver att ett externt Perlbibliotek används.
+Biblioteket heter XML::LibXSLT och kan installeras genom CPAN.
+
+\subsection{Network.svg}
+Dokumentet \emph{network.svg} är ett exempel på en nätverkskarta i SVG-format.
+Det är skapat av ett externt program med hjälp av GraphViz.
+
+\subsection{SvgAddBindings.xsl}
+XSL-formatmallen innehåller regler för hur exempelfilen \emph{network.svg} ska
+transformeras så att det berikas med bindningar och referenser.
+
+\section{Driftsättningsvy}
+
+Driftsättningsvyn i figur \vref{driftvy} visar de hårdvarukomponenter
+som ingår i systemet och var mjukvarukomponenterna är utplacerade.
+
+\begin{figure}[!hbtp] % Används float så kan man ange H för exakt
+                     % placering här
+\begin{center}
+\includegraphics[width=\textwidth]{figurer/driftvy.pdf}
+\end{center}
+\caption{Driftsättningsvy}
+\label{driftvy}
+\end{figure}
+
+\subsection{Klient}
+Klienten består av en dator med ett operativsystem som är kompatibelt med webbläsaren Firefox 3.5 eller
+senare.
+
+\subsection{Server}
+Servern består av en dator med ett UNIX-baserat operativsystem med
+webservern LightTDP installerad. 
+I webserverns rotkatalog för webdokument finns det fyra mappar.
+
+\begin{itemize}
+\item \emph{/script} innehåller systemets JavaScript-filer.
+\item \emph{/styles} innehåller CSS-stilmallar som styr dokumentens utseende.
+\item \emph{/cgi-bin} innehåller alla CGI-skript som klienten kan anropa.
+\item \emph{/doc} innehåller tillgängliga nätverkskartor i form av
+  SVG-dokument.
+\end{itemize}
+
+

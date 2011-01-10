@@ -1,0 +1,183 @@
+% Bakgrund
+% borde heta Bakgrund och även ta upp lite om nätverksvisualisering
+
+% inledning: förklara hur kapitlet är upplagt och varför denna ordning på
+% teknikerna + sammanfatta gärna i punktform vad du kommer att gå igenom
+% och hur innehållet hänger ihop
+
+% + lägg till avslutning och övergång till nästa kap.
+% Detta kapitel ska ge läsaren en teoretisk grund för de begrepp och
+% tekniker som används i arbetet.
+Detta kapitel ska ge läsaren en teoretisk grund för de viktigaste begreppen
+och teknikerna som används i rapporten.
+
+Kapitlet inleds med att förklara vad som menas nätverksvisualisering
+följt av hur jag valt att tolka begreppet öppen mjukvara som används genomgående i arbetet. 
+% De tekniker som beskrivs i detta kapitel bygger alla på öppen mjukvara och öppna standarder.
+Därefter beskrivs de tekniker som används i arbetet för att
+representera ett nätverk grafiskt följt av en förklaring av AJAX som
+används för att göra denna representation interaktiv och dynamisk.
+Slutligen ges en överblick av de tekniker som används på serversidan
+för att leverera data till och mottaga anrop från klienten.
+
+
+
+\section{Nätverksvisualisering}
+Ett icke trivialt IP-nätverk består av många noder som är förbundna
+med varandra genom olika typer av transmissionsmedier.
+Man kan föreställa sig nätverket som ett moln av noder och
+förbindelser.
+Nätverksvisualisering handlar om att kika in i molnet och snabbt få en
+övergripande bild över de komplexa relationer som finns i det.
+Grafer är ett kraftfullt sätt att representera ett IP-nätverk. 
+I grafen representeras nätverksutrustningen som noder och
+förbindelserna mellan dem som bågar.
+
+\section{Öppen mjukvara}
+Termen öppen mjukvara kan tolkas på olika sätt men har ofta innebörden
+att mjukvarans källkod ska finnas tillgänglig. 
+När termen öppen mjukvara används i denna rapport avses den definition
+organisationen Open Source Initiative skapat\cite{osi:open}.
+Open Source Initiative menar att källkoden ska vara tillgänglig utan
+kostnad. Det ska också vara möjligt att göra förändringar i koden och
+distribuera dessa.
+
+% -------- Grafisk representation
+
+\section{SVG}
+Scalable Vector Graphics\cite{w3c:svg} är ett språk som beskriver tvådimensionell
+vektor\-baserad grafik i formatet XML. SVG-bilder kan göras interaktiva och dynamiska
+genom att använda ECMAScript och en anpassad version av DOM level 2
+kallad SVG-DOM.
+
+\section{GraphViz}
+Graph Visualization Software\cite{att:graphviz} är ett grafvisualiseringssystem utvecklat av
+AT\&T Research.
+GraphViz innehåller verktyg och bibliotek för att
+generera grafer och presentera dem grafiskt i en mängd olika
+filformat. 
+GraphViz använder språket DOT\cite{Gasner:dot} för att beskriva en graf i en
+textbaserad konfigurationsfil.
+
+% -------- Slut grafisk representation
+
+
+\section{AJAX}
+\label{sect:ajax}
+AJAX är en förkortning skapad av Jesse James Garret som
+står för ``Asynchronous JavaScript And XML'' och är en samling
+tekniker för att skapa snabba och dynamiska webbsidor.
+Enligt Garret\cite{Garrett:ajax} består teknikerna av:
+\begin{itemize}
+  \item Presentation baserad på standarderna XHTML och CSS.
+  \item Dynamisk visning och interaktion genom Document Object Model.
+  \item Utbyte och manipulation av data genom XML och XSLT.
+  \item Asynkron hämtning av data genom XMLHttpRequest.
+  \item JavaScript för att binda ihop teknikerna.
+\end{itemize}
+
+\subsection{XHTML}
+XHTML\cite{w3c:xhtml} är en familj av XML-baserade dokumenttyper som är en delmängd
+och utökning av HTML version 4.
+Detta medför att ett XHTML-dokument kan analyseras, läsas, valideras och editeras
+med vanliga XML-verktyg. 
+
+\subsection{CSS}
+Cascading Style Sheets\cite{w3c:css} är en teknik som används för att styra utseendet
+på ett dokument. Genom att utnyttja CSS kan ett dokuments utseende och
+innehåll separeras. 
+
+CSS används ofta  tillsammans med
+HTML-dokument men kan användas i XML-tillämpningar som exempelvis SVG
+och XHTML.
+
+\subsection{DOM}
+Document Object Model\cite{w3c:dom2} är ett API som möjliggör dynamisk interaktion
+med ett dokument. Dokumentet representeras som ett träd där varje nod
+i trädet är ett element i DOM.
+
+DOM-gränssnittet tillåter att ett program dynamiskt ändrar
+innehåll, struktur och utseendet på ett dokument.
+
+\subsection{XML}
+Extensible Markup Language\cite{w3c:xml} är ett standardiserat textformat som
+beskriver innehållet i ett dataobjekt, företrädelsevis ett dokument. 
+
+XML är baserat på det äldre märkspråket SGML och påminner
+därför ytligt om HTML.
+
+Ett XML-dokument som uppfyller kraven på att alla taggar ska vara avslutade och
+enbart innehålla tillåtna tecken kallas välformulerat. 
+Anges en DTD\footnote{Document Type Definition} i dokumentets huvud kan dess innehåll valideras. 
+En DTD innehåller definitioner för hur dokumentet ska struktureras med en lista
+av godkända element och attribut. Ett validerat XML-dokument måste också vara
+välformulerat.
+
+
+% Element och attribut ärver semantik från HTML?
+% Webbläsare som inte stödjer XML med HTML v4 kan analysera dokumentet
+
+\subsection{XSLT}
+Extensible Stylesheet Language Transformations\cite{w3c:xslt} är ett XML-baserat
+språk som används för att transformera XML-dokument. 
+Det resulterande dokumentet kan skilja sig markant från det ursprungliga då element
+i det kan filtreras och ordnas om. Godtyckliga XML-strukturer kan
+också läggas till det. 
+
+\subsection{XMLHttpRequest}
+XMLHttpRequest\cite{w3c:xhr} är ett JavaScript-objekt ursprungligen skapat av
+Microsoft som tillåter hämtning av data givet en URL\footnote{Unified
+  Resource Locator}.
+Trots namnet stödjer objektet\cite{mdc:xhr} dataöverföringar i flera olika
+format, bland annat text. Objektet stödjer även överföringar via andra protokoll än
+http som till exempel ftp.
+
+De populäraste webbläsarna har en implementation av detta objekt
+och W3C\footnote{ World Wide Web Consortium} har även standardiserat
+det.
+
+Genom att utnyttja XMLHttpRequest-objektet kan
+asynkrona funktionsanrop göras till en server och resultatet visas i
+dokumentet i webbläsaren utan att hela dokumentet behöver laddas om.
+
+\subsection{JavaScript}
+JavaScript\cite{mdc:javascript} är en dialekt av det standardiserade programmeringsspråket
+ECMAScript och utvecklades ursprungligen av företaget Netscape. 
+Den vanligaste miljön för JavaScript är webbläsaren som exponerar ett
+dokuments DOM-gränssnitt för JavaScript-programmeraren.
+
+JavaScript stödjer programmering i flera olika paradigmer så som 
+objektorienterad, procedurell, och funktionell programmering\cite{Crockford:javascript_good_parts:analyze}.
+
+% -------- Slut AJAX
+
+
+
+% -------- Backend
+ 
+\section{LightTPD}
+LightTPD\cite{lighttpd} är en webbserver som finns tillgänglig som öppen mjukvara. Den
+fokuserar på  hög prestanda och låg minnesanvändning.
+
+\section{CGI}
+Common Gateway Interface\cite{w3c:cgi} är en defacto-standard som specificerar hur en
+webbservers funktionalitet kan utökas genom att låta ett externt program 
+generera det dokument som webbservern ska leverera till en klient.
+
+Webbservern avgör vilket program som ska utföras baserat på en URL.
+%URI\footnote{Unified Resource Identifier} %referens eller adress i
+                                %fotnot? \cite{rfc:uri}
+och information rörande förfrågan överförs till det externa programmet via 
+miljövariabler\cite{rfc:cgi}.
+
+
+\section{Sammanfattning}
+Detta kapitel har gett en orientering i vad nätverksvisualisering
+innebär och vilka olika tekniker som använts för att implementera
+systemet.
+
+Med de ovan beskrivna teknikerna som utgångspunkt redovisar jag i nästa
+kapitel vilka designval som identifierades under arbetet.
+
+% Kort diskussion om vad man precis läst och en övergång till hur jag
+% analyserade problemet baserat på dessa komponenter.

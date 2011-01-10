@@ -1,0 +1,199 @@
+\section{Asynkrona anrop via XMLHttpRequest}
+\label{sect:xhr}
+Klientens anrop till servern att utföra program ska enligt kravspecifikationen göras asynkront. 
+Detta innebär att klientens gränssnitt som utgörs av SVG-dokumentet ej låses medan den väntar på svar från servern. 
+
+För att underlätta asynkrona anrop har en hjälpfunktion skapats kallad \emph{doPlainXHR}.
+Funktionen använder parametrar som anger på vilket sätt anropet ska ske (Get eller Post), vilken URL den ska utföra anropet mot och en funktion som ska utföras när servern skickar ett svar. 
+\emph{doPlainXHR} returnerar serverns svar som ren text men objektet XMLHttpRequest kan även returnera svaret som XML.
+
+Ett XMLHttpRequest-objekt kan endast hantera ett anrop i taget. 
+Ett svar från ett anrop måste ges innan objektet kan utföra nästa anrop.
+Eftersom \emph{doPlainXHR} i listning \vref{lst:xhr} skapar ett nytt XMLHttpRequest-objekt vid varje anrop döljs denna begränsning för användaren.
+
+\lstset{language=Java}
+\begin{lstlisting}[float=htp, caption={XMLHttpRequest}, label=lst:xhr]
+base.doPlainXHR = function( method, url, fun ) {
+    var xhr = new XMLHttpRequest();
+    xhr.open( method, url );
+    xhr.onreadystatechange = function() {
+
+        // Request is done
+        if (xhr.readyState == 4) {
+
+            // Check status code and handle errors
+            if ( xhr.status == 200 ) {    // it went well
+                fun( xhr.responseText );  
+            } else if ( xhr.status == 404 ) {
+                base.showNotFoundError( url );
+            } else if ( xhr.status == 500 ) {
+                base.showInternalError( url );
+            } else {
+                base.showUnknownError( xhr.responseText );
+            }
+            
+        }
+    };
+    xhr.send( null );
+}
+\end{lstlisting}
+
+
+\section{Expedieringsobjekt}
+\label{sect:expedieringsobjekt}
+Systemet har stöd för att utföra flera funktioner givet en händelse i SVG-dokumentet. 
+Detta är implementerat genom expedieringsobjekt som innehåller en datastruktur med nyckel/värde-par för ett godtyckligt antal funktioner.
+När JavaScript-filen \emph{base.js} laddas av webläsaren skapas ett expedieringsobjekt för varje definierad händelse i SVG-dokumentet.
+
+\subsection{Funktion för att skapa expedieringsobjekt}
+Funktionen \emph{makeDispatch} i listning \vref{lst:js-exp} skapar ett nytt expedieringsobjekt och returnerar ett gränssnitt till dess metoder.
+Metoderna gör det möjligt att lägga till, ta bort och lista funktioner i objektet.
+Metoden \emph{handleEvent} tar ett händelseobjekt som parameter och utför alla funktioner som för tillfället finns i expedieringsobjektets datastruktur.
+
+
+\begin{lstlisting}[float=htp, caption={Skapa expedieringsobjekt}, label=lst:js-exp]
+base.makeDispatch = function() { 
+    
+    var funMap = {}; // functions
+
+    // Return the interface to the dispatch object
+   return { 
+       addFunction: function( name, fun ) { 
+           funMap[name] = fun;
+       },
+       
+       removeFunction: function( name ) {
+           delete funMap[name];
+       },
+       
+       listFunctions: function() {
+           var names = [];
+           for (name in funMap) {
+               // hasOwnProperty is used so that things from the prototype chain
+               // isn't dragged up here
+               if (funMap.hasOwnProperty( name )) {
+                   names.push( name );
+               }
+           }
+           return names;
+       },
+
+        handleEvent: function( evt ) {
+            for (name in funMap) {
+                if (funMap.hasOwnProperty( name )) {
+                    funMap[name]( evt );
+                }
+            }
+        }
+
+   }; // end return
+}
+
+\end{lstlisting}
+
+
+
+\subsection{Tillägg av funktioner till expedieringsobjekten}
+Kodexemplet i listning \vref{lst:exp-addfun} visar hur en funktion kan läggas till ett expedieringsobjekt för händelsen \emph{onclick}.
+När händelsen avfyras kommer ett asynkront anrop att genomföras till ett CGI-skript med namnet \emph{ajaxTest.pl}.
+Resultatet av körningen av skriptet kommer att visas i en dialogruta i webläsaren.
+
+\begin{lstlisting}[float=htp, caption={Tillägg av funktioner i expedieringsobjekt}, label=lst:exp-addfun]
+base.edgeClickDispatch.addFunction( 'ajax', function( evt )
+{
+    base.makePlainXMLRequest( 'GET', '/cgi-bin/ajaxTest.pl?key=edge_ajax',
+    function( response ) 
+    {
+      alert( response ) 
+    } );
+} );
+\end{lstlisting}
+
+
+\section{Funktionsmeny}
+När en användare klickar på en nod i SVG-dokumentet visas en meny som listar de funktioner som finns tillgängliga. 
+När dessa funktioner utförs kan de använda den aktuella noden som parameter.
+
+Funktionsmenyn är kopplad till ett funktionsobjekt som skapas när dokumentet laddats klart av webläsaren.
+Listning \vref{lst:createMenu} visar hur objektet kan skapas.
+
+\begin{lstlisting}[float=htp, caption={Skapa funktionsmeny}, label=lst:createMenu]
+base.svgLoadDispatch.addFunction( 'create_menu', 
+                                  function() { 
+                                      gui.functionMenu.create( menuConfig ) } );
+
+\end{lstlisting}
+
+
+
+\subsection{Konfiguration av funktionsmeny}
+När funktionsmenyn skapas kan ett konfigurationsobjekt anges som parameter.
+Detta objekt innehåller information om vilka dimensioner menyn ska ha, hur den ska se ut och vilka funktioner den ska innehålla. 
+Funktionerna anges som ett nyckel/värde-par där värdet är en referens
+till en namngiven eller anonym funktion.
+Om värden saknas i konfigurationsobjektet eller om objektet saknas helt så skapas funktionsmenyn med förvalda värden för dessa.
+Listning \vref{lst:menuConf} visar ett exempel på ett konfigurationsobjekt.
+
+\begin{lstlisting}[float=htp, caption={Konfigurationsobjekt för meny}, label=lst:menuConf]
+var menuConfig = { 
+  x: base.viewBoxCenter - 400, y: 0,
+  width: 800, height: 200, 
+  rx: 5, ry: 5,
+  functions: { 'Get IP adress': hostToIP,
+    'Show open trouble tickets': showOpenTT,
+    'Toggle timed events': timedEventTest,
+    'Ping node': pingNode,
+    'Show hardware info': getHW
+  } 
+};
+\end{lstlisting}
+
+
+
+\subsection{Funktionmenysobjektets gränssnitt}
+När funktionmenyn skapas och initieras med en konfiguration returneras funktionsmenyobjektets gränssnitt.
+Gränssnittet innehåller metoder för att visa och gömma menyn, lägga till och ta bort funktioner ur menyn.
+Det går även att erhålla en referens till det element användaren senast klickade på och var orsaken till att menyn visades.
+Listning \vref{lst:menuInterface} visar gränssnittet som returneras när funktionsmenyobjektet skapas.
+
+\begin{lstlisting}[float=htp, caption={Funktionsmenyns gränssnitt}, label=lst:menuInterface]
+ return {
+         show: function( evt ) {
+                menu.setAttribute( 'display', 'block' );
+                gui.fadeIn( menu );
+                if (evt) currentElement = evt.target;
+        },
+        
+        hide: function( evt ) {
+            gui.fadeOut( menu, function() { 
+                menu.setAttribute( 'display', 'none'); } );
+            if (evt) currentElement = evt.target;
+        },
+        
+         addFunctions: function( functions ) {
+             this.removeFunctions();
+             this.createFunctionGroup( functions, menuGroup );
+        },
+         
+         removeFunctions: function() {
+             menuGroup.removeChild( 'functionGroup' );
+         },
+         
+        currentElement: function() { return currentElement; },
+}
+\end{lstlisting}
+
+
+% Diskussion för hela implementationskapitlet
+\section{Sammanfattning}
+I detta kapitel har jag redovisat implementationen av ett system för interaktiv
+visualisering av IP-nätverk. Implementationen bygger på
+kravspecifikationen i kapitel \vref{chap:krav} och resultatet av min
+problemanalys i kapitel \vref{chap:analys}.
+Kapitlet började med att ge en översikt över systemet för att
+sedan i djupare detalj visa varje komponent. 
+Av praktiska och utrymmesskäl har jag valt att enbart visa programkod för de viktigaste
+delarna av systemet.
+
+I nästa kapitel utvärderar jag resultatet av implementationen och
+visar testningen av kraven i kravspecifikationen.

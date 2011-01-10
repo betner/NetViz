@@ -1,0 +1,326 @@
+För att kunna avgöra om ett utvecklingsprojekt nått en punkt där det
+kan anses vara färdigt måste tester genomföras för att verifiera
+kravspecifikationen.
+Jag använde tester för att avgöra när varje del av
+systemet var färdigställt och därför var jag tvungen att i samband med
+framställandet av kravspecifikationen också definiera hur kraven i
+denna skulle testas. En lista med testerna redovisades i kapitel \vref{sect:test_av_krav}.
+För att testerna ska kunna genomföras måste en representativ testmiljö
+sättas upp. En detaljerad beskrivning av testmiljön ges i avsnittet som
+behandlar testningen av kravspecifikationen.
+
+Kapitlet inleds med att visa hur syftet med arbetet uppfyllts
+följt av en utvärdering av de designval jag gjort i implementationen
+av systemet.
+Avslutningsvis redovisar min testning av kravspecifikationen och
+sammanfattar hur väl systemet uppfyller kraven.
+
+
+\section{Uppfyllande av syfte}
+Syftet med detta arbete som jag skrev i inledningen var att utveckla ett prototypsystem som gör nätverkskartor interaktiva.
+Det skulle vara möjligt att anropa befintliga verktygsprogram via dessa kartor.
+I kapitel \vref{chap:implementation} beskrev jag ett system som
+uppfyller följande:
+
+\begin{itemize}
+\item Genererar interaktiva nätverkskartor baserade på SVG-dokument
+  och JavaScript.
+\item Tillåter anrop av CGI-skript på en webbserver genom att en
+  användare interagerar med nätverkskartan.
+\item Visar resultat från körning av CGI-skript på webbservern i
+  nätverkskartan.
+\end{itemize}
+
+De tre punkterna ovan anser jag tillsammans uppfyller syftet med detta
+arbete.
+
+% \section{Inkludera SVG i XHTML}
+% Det är möjligt att inkludera SVG-dokumentet som representerar ett IP-nätverk i ett XHTML-dokument.
+% På detta sätt kan befintliga XHTML-baserade webapplikationer utökas med den funktionalitet
+% som erbjuds av detta system. 
+
+
+\section{Utvärdering av designval}
+I kapitel \vref{chap:analys} beskrev jag de designval jag
+funnit för att lösa var och ett av de fyra delproblem jag brutit ned
+arbetet till.
+I detta avsnitt, som har samma uppdelning som kapitel
+\vref{chap:analys}, utvärderar jag de alternativ jag valde i
+implementationen av systemet.
+% \begin{itemize}
+% \item Bindning av JavaScript-funktioner.
+% \item Hantering av användarinitierade händelser.
+% \item Anrop från klient till server.
+% \item Behandling av anrop från klient.
+% \end{itemize}
+
+\subsection{Bindning av JavaScript-funktioner}
+%val
+I kapitel \vref{sect:xsl_trans} framgår det att jag valt alternativet
+att skapa ett temporärt SVG-dokument berikat med bindningar genom att
+transformera originaldokumentet genom XSLT på serversidan.
+
+%motivering
+Alternativet att använda XSLT valdes för att originaldokumentet ska lämnas oberört. 
+Detta innebär att originaldokumentet kan användas i andra tillämpningar som inte behöver vara beroende
+av hur detta system använder det.
+Ändringar i systemet kan därför göras utan att andra tillämpningar berörs.
+
+% Flyttas till Framtida arbete:
+% För att minimera denna upprepade generering skulle ett nyligen genererat dokument kunna sparas
+% i ett ``cacheminne'' under en begränsad tid. Tyvärr medför detta fler
+% skrivningar till och läsningar från hårddisk.
+
+%utvärdering
+En nackdel med den valda lösningen är att ett nytt SVG-dokument måste genereras varje gång en klient
+begär att få dokumentet för en specifik del av nätverket. 
+Systemet har ej testats under last med många klienter som begär
+nätverkskartor.
+Under arbetet uppfattade jag genereringen av dokumenten som mycket snabb.
+
+
+\subsection{Hantering av användarinitierade händelser}
+%val
+När ett SVG-dokument transformeras med XSLT skapas nya attribut i utvalda elements attributlistor.
+Dessa attribut binder en händelse till en JavaScript-funktion.
+Systemet använder sig av flera expedieringsobjekt, ett per händelse
+och element. I kapitel \vref{sect:expedieringsobjekt} visade jag
+implementationen av de expedieringsobjekt som används i systemet.
+
+%motivering
+Dessa expedieringsobjekt kan hålla ett godtyckligt antal (inklusive noll) funktioner som ska utföras när
+en händelse avfyras.
+Detta innebär att systemet enkelt kan byggas ut genom att lägga till, ta bort och förändra de funktioner
+som expedieringsobjekten håller.
+Alternativet till att använda expedieringsobjekt för att ta hand om
+utlösta händelser är som jag skrev i kapitel \vref{sect:händelser} att
+programmera en specialiserad funktion för varje element och
+händelse. Jag anser att det senare alternativet gör systemet svårare att utöka
+med ny funktionalitet. Utökningar kräver även ändringar i
+funktionernas programkod vilket kan leda till att nya
+defekter introduceras i funktionernas programkod.
+
+%utvärdering
+De flesta händelser i systemet kräver dock enbart att en funktion utförs och expedieringsobjekten medför 
+därför onödiga beräkningar i dessa fall. Expedieringsobjekten är enkla att utöka med nya funktioner under
+exekvering och jag anser att det är en stor fördel att hantera alla
+typer av händelser på samma sätt.
+
+\subsection{Anrop från klient till server}
+%val
+I kapitel \vref{sect:anrop} visade jag två alternativ för hur
+asynkrona anrop från klient till server kan ske. Jag valde att använda
+det första alternativet med XML\-Http\-Request-objektet .
+
+%motivering
+XMLHttpRequest fungerar som vilket JavaScript-objekt som helst. Jag
+anser att XMLHttpRequest-objektet som visades i listning
+\vref{lst:xhr} är enkelt att använda.
+Alternativet att använda ett script-element för asynkron kommunikation är inte aktuellt då det inte finns något
+behov att anropa servrar med olika värdnamn. 
+Begränsningen i vilka värdnamn som får användas vid serveranrop finns inte längre kvar i
+Firefox 3.5 och senare.
+
+%utvärdering
+%Enligt kravspecifikationen får anrop till servern endast ske
+%asynkront. XML\-Http\-Request-objektet uppfyller detta krav.
+Ett problem med att använda asynkron kommunikation enligt den valda
+lösningen är att användaren ej kan se om klienten anropar servern via webbläsarens gränssnitt.
+
+
+\subsection{Behandling av anrop från klient}
+%val
+I kapitel \vref{sect:CGI-bibliotek} visade jag att systemet har ett specifikt CGI-skript för varje funktion som användaren kan anropa från funktionsmenyn i användargränssnittet.
+CGI-skripten ansvarar för att ta emot och analysera anropet, utföra funktionen och returnera resultatet till klienten.
+% Då lösningen att använda XMLHttpRequest-objektet valdes finns det två olika sätt att leverera 
+% resultatet till klienten.
+% Resultaten kan antingen levereras som ett XML-objekt eller som ren text.
+% Systemet använder det senare alternativet då funktionerna på klientsidan ej behöver göra någon
+% avancerad analys eller tolkning av resultatet. 
+
+%motivering
+När systemet utökas med nya funktioner behöver inga tillägg eller ändringar göras i de befintliga
+programmen på servern. 
+Det minskar risken att införa defekter i den befintliga programkoden.
+
+%utvärdering
+En nackdel är att duplicering av programkod kan ske då flera CGI-skript 
+hanterar klientens anrop på samma eller liknande sätt.
+Det kan vara svårt att överblicka systemet om det utökas med 
+många CGI-skript. 
+Det finns inga krav på hur GCI-skriptens gränssnitt ska se ut vilket
+kan medföra en risk att deras utformning skiljer sig helt mellan
+skripten.
+Detta i sin tur kan göra det svårare att underhålla systemet.
+
+
+\section{Uppfyllande av kravspecifikation}
+I detta avsnitt redovisar jag hur jag testat systemet mot
+kravspecifikationen och huruvida kraven blivit uppfyllda.
+Jag har på klientsidan använt följande testmiljö:
+\begin{itemize}
+\item Webbläsaren Firefox version 3.5 och 3.6.
+\item Microsoft Windows XP med Service Pack 3.
+\item Apple MacOSX version 10.6.3.
+\end{itemize}
+
+
+På serversidan har jag använt följande testmiljö:
+\begin{itemize}
+\item Debian 5.0.4 för 64-bitars arkitektur.
+\item Webbservern LightTPD 1.4.26.
+\end{itemize}
+
+\subsection{Obligatoriska krav}
+  
+\subsubsection*{K1 -- Mjukvarupaketet GraphViz ska användas för att generera SVG-dokument}
+De SVG-dokument systemet hanterar är skapade av ett externt program som använder
+GraphViz.
+
+\subsubsection*{K2 -- Den grafiska representationen ska vara i formatet SVG}
+Användargränssnittet på klienten utgörs av ett SVG-dokument.
+
+\subsubsection*{K3 -- Applikationer på serversidan ska vara av typen CGI-skript skrivna i 
+  programmeringsspråket Perl}
+Alla applikationer på serversidan är skrivna i Perl och använder CGI.
+
+\subsubsection*{K4 -- Applikationer på klientsidan ska vara skrivna i
+  programmeringsspråket JavaScript}
+All programkod i systemet som utförs på klienten är skriven i JavaScript.
+
+\subsubsection*{K5 -- Webbservern som används i systemet ska vara LightTPD}
+Systemet är utvecklat för och testat på webbservern LightTPD.
+
+\subsubsection*{K6 -- Systemet ska stödja webbläsaren Firefox version 3.5 eller senare}
+Systemet är utvecklat för Firefox version 3.6.
+Jag utförde de tillgängliga funktionerna i klientsidans gränssnitt i Firefox version 3.5 och version 3.6.
+Systemets funktionalitet skiljde sig inte mellan de två
+webbläsarversionerna och SVG-dokumentet renderades korrekt i bägge.
+
+\subsubsection*{K7 -- Ett befintligt verktygsprogram ska kunna anropas via användarinteraktion
+  med SVG-dokument i webbläsaren}
+Detta krav är ej uppfyllt på grund av omständigheter som gjorde det
+omöjligt att testa systemet i uppdragsgivarens nätverk inom arbetets tidsram.
+Det går dock att exekvera ett godtyckligt program på serversidan genom
+att använda CGI. Programmet kan vara ett verktygsprogram.
+%Jag har i kapitel \vref{sect:CGI-bibliotek} visat att systemet på serversidan kan utföra godtyckliga program.
+Uppdragsgivaren har godtagit detta.
+
+\subsubsection*{K8 -- Anrop enligt krav K7 ska ske asynkront}
+Alla anrop till servern sker genom att använda funktionen \emph{doPlainXHR}.
+Funktionen använder XMLHttpRequest-objektets metod \emph{open} med 
+det förvalda värdet att operationen ska utföras asynkront.
+För att testa detta krav försäkrade jag mig först om att all
+programkod som genomför anrop till servern använder \emph{doPlainXHR}.
+Efter det programmerade jag testprogram på serversidan som tog emot
+anropet, genomförde en paus under tre sekunder och returnerade en
+textsträng till klienten.
+Under tiden som testprogrammet exekverades på servern verifierade jag
+att det gick att interagera med nätverkskartan och utföra funktionerna i funktionsmenyn.
+
+\subsubsection*{K9 -- Resultatet av körningen av verktygsprogrammet ska visas i
+  den webbläsare där anropet initierades}
+CGI-skripten på serversidan returnerar resultaten av körningen av
+verktygsprogram till den anropande klienten. Enligt
+RFC\footnote{Request for comments. Ett dokument som beskriver ett
+  förslag till standard.}
+3875\cite{rfc:cgi} som beskriver CGI, ska en webbserver omvandla ett
+svar från ett CGI-skript till ett svar till den anropande klienten.
+Jag genomförde testade detta genom att utföra funktionerna i
+funktionsmenyn och notera om ett svar returnerades till webbläsaren
+och visades i SVG-dokumentet.
+Precis som för krav K7 har detta krav ej testats med befintliga verktygsprogram men
+principen är densamma oavsett vilket program som utförs på serversidan.
+
+\subsubsection*{K10 -- Interaktion med SVG-dokument på klientsidan ska ej påverka 
+  originaldokumentet på serversidan}
+När en klient begär att få ett berikat SVG-dokument från webbservern genereras en temporär 
+kopia av originaldokumentet.
+Interaktioner med dokumentet på klientsidan kan således ej påverka
+originaldokumentet.
+Jag testade detta krav genom att utföra de tillgängliga funktionerna på
+klientsidan och kontrollerade att originaldokumentet på servern var oförändrat.
+
+\subsubsection*{K11 -- Alla komponenter i systemet ska använda öppen
+  mjukvara}
+De komponenter som ingår i systemet är alla av typen öppen mjukvara.
+Komponenterna är:
+\begin{itemize}
+\item Webbläsaren Firefox.
+\item Webbservern LightTPD med den inkluderade
+implementationen av CGI.
+\item Biblioteket XML::LibXSLT som inkluderar biblioteket libxslt.
+\item Mjukvarupaketet GraphViz.
+\end{itemize}
+% Är det alla komponenter kravet hänvisar till? JA!(?) :-)
+
+\subsection{Frivilliga krav}
+
+\begin{figure}[!hbt]
+\begin{center}
+\includegraphics[width=\textwidth]{figurer/funktionsmeny.png}
+\end{center}
+\caption{Skärmavbild som visar funktionsmenyn}
+\label{pic:funktionsmeny}
+\end{figure}
+
+\subsubsection*{F1 -- När en användare högerklickar på ett element i SVG-dokumentet ska en lista
+  med tillgängliga funktioner visas}
+Kravet är ej uppfyllt men en liknande funktion implementerades.
+När en användare klickar på en nod i grafen visas en meny med funktioner (funktionsmenyn) i mitten av dokumentets övre del.
+Figur \vref{pic:funktionsmeny} visar funktionsmenyn i användargränssnittet.
+
+Att visa en meny på den position i dokumentet där användaren högerklickar är problematiskt.
+
+Problemet grundas i hur x- och y-koordinater används i webbläsaren och dokumentet.
+När ett nytt element ska läggas till anges dess x- och y-koordinater relativt dokumentets övre vänstra hörn.
+När en händelse avfyras i webbläsaren innehåller händelseobjektet x- och y-koordinater som är relativa med
+webbläsarfönstrets övre vänstra hörn. 
+Om dokumentet förstoras så att det inte ryms i webbläsarfönstret kan det flyttas med hjälp av rullningslister
+i webbläsaren. 
+Sker detta går det inte att använda de koordinater som händelseobjektet innehåller för att skapa ett nytt
+element på platsen användaren klickade. 
+Händelseobjektets koordinater och dokumentets koordinater tillhör olika koordinatsystem.
+Koordinaternas värden anger pixlar på skärmen.
+
+Firefox tillhandahåller värden för hur många pixlar ett dokument flyttats med rullningslisterna.
+Jag antog att det med dessa värden gick att översätta de koordinater som händelseobjektet
+innehöll till samma koordinatsystem som dokumentet använde. 
+
+Jag tog fram denna formel där $d$ står för dokument, $h$ för händelse och $f$ för förflyttning:
+\[ (x,y)_{d}=(x_{h}+x_{f}, y_{h}+y_{f}) \]
+
+Dessvärre är ekvationen ej var sann för varje värde $f$.
+Ju mer dokumentet flyttas i webbläsaren desto större blir felet.
+Detta innebär att menyn visas längre från muspekaren ju mer dokumentet flyttas i webbläsarfönstret.
+
+
+\subsubsection*{F2 -- Listan i krav F1 ska genereras baserat på elementets identifierare}
+Detta krav har ej uppfyllts då jag anser att det tar för lång tid att utveckla ett system för att knyta en viss typ
+av hårdvara till en given mängd funktioner.
+
+\subsubsection*{F3 -- Systemet ska innehålla funktionalitet för att automatiskt anropa ett
+  verktygsprogram baserat på en timer}
+Detta krav har ej uppfyllts då det inte har getts möjlighet att anropa verktygsprogram från webbservern.
+Jag har utvecklat en timer som kan anropa ett godtyckligt antal JavaScript-funktioner på klientsidan.
+En anropad funktion kan i sin tur anropa ett program på serversidan.
+
+\section{Sammanfattning}
+Systemet som beskrevs i kapitel \vref{chap:implementation} uppfyllde
+de obligatoriska kraven K1 till och med K12 med undantag för krav K7.
+Detta krav är ej uppfyllt på grund av omständigheter som gjorde det
+omöjligt att testa systemet i uppdragsgivarens nätverk inom arbetets
+tidsram.
+CGI-skript på webbservern kan dock exekvera ett godtyckligt program på
+serversidan vilket innebär att det inte finns några tekniska
+begränsningar i att koppla ihop verktygsprogrammen med systemet.
+
+Inget av de frivilliga kraven uppfylldes enligt
+kravspecifikationen. Istället för att visa en meny med funktioner för
+användaren när denne högerklickar på ett element i nätverkskartan
+enligt krav F1,  visas menyn högst upp i mitten av
+nätverkskartan.
+Gällande krav F3 så implementerade jag en timerfunktion enligt
+kravspecifikationen. 
+Jag implementerade en timerfunktion enligt krav F3 men kunde tyvärr inte uppfylla kravet helt då jag
+ej kopplade ihop timern med befintliga verktygsprogram.

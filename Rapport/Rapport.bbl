@@ -1,0 +1,146 @@
+\begin{thebibliography}{10}
+
+\bibitem{Telenor:om}
+Telenor, ``{Om Telenor}.''
+  \url{http://www.telenor.se/privat/om-telenor/index.html}, july 2010.
+
+\bibitem{Bredbandsbolaget:om}
+Bredbandsbolaget, ``{Om Bredbandsbolaget}.''
+  \url{http://www.bredbandsbolaget.se/omoss/index.html}, july 2010.
+
+\bibitem{Polya:solve}
+G.~Pólya, {\em How to solve it}.
+\newblock {Princeton University Press}, februari 1973.
+
+\bibitem{osi:open}
+{O}pen~{S}ource {I}nitiative, ``{T}he {O}pen {S}ource {D}efinition.''
+  \url{http://opensource.org/docs/osd}, 2010.
+
+\bibitem{w3c:svg}
+W3C, ``{S}calable {V}ector {G}raphics ({SVG}) 1.0 specification.''
+  \url{http://www.w3.org/TR/SVG10/index.html}, september 2001.
+
+\bibitem{att:graphviz}
+{AT\&T}, ``{GraphViz}.''
+  \url{http://www2.research.att.com/areas/visualization/projects_software/grap%
+hviz.php}, april 2010.
+
+\bibitem{Gasner:dot}
+S.~N. Emden R.~Gasner, Eleftherios~Koutsofios, {\em Drawing graphs with
+  \emph{dot}}, december 2009.
+
+\bibitem{Garrett:ajax}
+J.~J. Garrett, ``Ajax: A new approach to web applications.''
+  \url{http://www.adaptivepath.com/ideas/essays/archives/000385.php}, februari
+  2005.
+
+\bibitem{w3c:xhtml}
+W3C, ``{XHTML}{\texttrademark} 1.0 {The Extensible HyperText Markup Language
+  (Second Edition)}.'' \url{http://www.w3.org/TR/xhtml1/}, augusti 2002.
+
+\bibitem{w3c:css}
+W3C, ``{C}ascading {S}tyle {S}heets.'' \url{http://www.w3.org/Style/CSS/}, mars
+  2010.
+
+\bibitem{w3c:dom2}
+W3C, ``{D}ocument {O}bject {M}odel ({DOM}) level 2 core specification.''
+  \url{http://www.w3.org/TR/DOM-Level-2-Core}, november 2000.
+
+\bibitem{w3c:xml}
+W3C, ``{E}xtensible {M}arkup {L}anguage.'' \url{http://www.w3.org/XML/}, mars
+  2010.
+
+\bibitem{w3c:xslt}
+W3C, ``{XSL} transformations ({XSLT}).'' \url{http://www.w3.org/TR/xslt},
+  november 1999.
+
+\bibitem{w3c:xhr}
+W3C, ``{XMLHttpRequest}.'' \url{http://www.w3.org/TR/XMLHttpRequest/}, november
+  2009.
+
+\bibitem{mdc:xhr}
+{Mozilla Developer Center}, ``{XMLHttpRequest}.''
+  \url{https://developer.mozilla.org/en/XMLHttpRequest}, mars 2010.
+
+\bibitem{mdc:javascript}
+M.~D. Center, ``About javascript.''
+  \url{https://developer.mozilla.org/en/About_JavaScript}, april 2010.
+
+\bibitem{Crockford:javascript_good_parts:analyze}
+D.~Crockford, {\em {JavaScript}: The Good Parts}.
+\newblock O'Reilly, maj 2008.
+
+\bibitem{lighttpd}
+Okänd, ``{LIGHTTPD}.'' \url{http://www.lighttpd.net/}, februari 2010.
+
+\bibitem{w3c:cgi}
+D.~Connolly, ``{CGI}: {C}ommon {G}ateway {I}nterface.''
+  \url{http://www.w3.org/CGI/}, maj 2009.
+
+\bibitem{rfc:cgi}
+K.~C. D.~Robinson, ``The common gateway interface ({CGI}) version 1.1.''
+  \url{http://www.ietf.org/rfc/rfc3875.txt}, oktober 2004.
+
+\bibitem{StLaurent:svg_essentials:attribute}
+J.~D. Eisenberg, {\em {SVG} Essentials}.
+\newblock O'Reilly, februari 2002.
+
+\bibitem{w3c:svg:script}
+W3C, ``{S}calable {V}ector {G}raphics ({SVG}) 1.0 specification.''
+  \url{http://www.w3.org/TR/SVG10/script.html}, september 2001.
+
+\bibitem{w3c:dom2:ecma}
+W3C, ``{ECMAScript} {L}anguage {B}inding.''
+  \url{http://www.w3.org/TR/DOM-Level-2-Core/ecma-script-binding.html},
+  november 2000.
+
+\bibitem{microsoft:xslt}
+Microsoft, ``Deploying {XSLT} in {I}nternet {E}xplorer.''
+  \url{http://msdn.microsoft.com/en-us/library/ms760279(VS.85).aspx}, 2010.
+
+\bibitem{gecko:xslt}
+{Mozilla Developer Center}, ``Gecko {FAQ}.''
+  \url{https://developer.mozilla.org/en/Gecko_FAQ}, februari 2010.
+
+\bibitem{opera:xslt}
+{Opera Software}, ``{Web specifications supported in Opera Presto 2.5}.''
+  \url{http://www.opera.com/docs/specs/presto25/#xml}, april 2010.
+
+\bibitem{webkit:xslt}
+{T}he {W}ebkit {O}pen~{S}ource {P}roject, ``{XSLT}.''
+  \url{http://webkit.org/projects/xslt/index.html}, 2010.
+
+\bibitem{apache:xalan}
+{A}pache~{S}oftware {F}oundation, ``{The Apache Xalan Project}.''
+  \url{http://xalan.apache.org/}, 2005.
+
+\bibitem{Pajas:libxslt-perl}
+P.~Pajas, ``{XML::LibXSLT}.''
+  \url{http://search.cpan.org/dist/XML-LibXSLT/LibXSLT.pm}, april 2010.
+
+\bibitem{Veillard:libxslt}
+D.~Veillard, ``The {XSLT} {C} library for {GNOME}.''
+  \url{http://xmlsoft.org/XSLT/}, april 2010.
+
+\bibitem{w3c:svg:dom}
+W3C, ``{SVG} {D}ocument {O}bject {M}odel ({DOM}).''
+  \url{http://www.w3.org/TR/SVG/svgdom.html}, januari 2003.
+
+\bibitem{w3c:xhr:cross_site}
+W3C, ``{Cross-Origin Resource Sharing}.'' \url{http://www.w3.org/TR/cors/},
+  mars 2009.
+
+\bibitem{mdc:xhr:cross_site}
+{Mozilla Developer Center}, ``{HTTP access control}.''
+  \url{https://developer.mozilla.org/En/HTTP_Access_Control}, januari 2010.
+
+\bibitem{Levitt:ajax-harmful}
+J.~Levitt, ``Fixing {AJAX}: {XMLHttpRequest} considered harmful.''
+  \url{http://www.xml.com/pub/a/2005/11/09/fixing-ajax-xmlhttprequest-consider%
+ed-harmful.html}, november 2005.
+
+\bibitem{StLaurent:svg_essentials:text}
+J.~D. Eisenberg, {\em {SVG} Essentials}.
+\newblock O'Reilly, februari 2002.
+
+\end{thebibliography}

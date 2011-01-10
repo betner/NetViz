@@ -1,0 +1,124 @@
+\documentclass[a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[swedish]{babel}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{url}
+\usepackage{float}
+\usepackage[swedish]{varioref}
+\usepackage{cite}
+\usepackage{pdfpages}
+
+
+%% Define a new 'leo' style for the package that will use a smaller font.
+\makeatletter
+\def\url@leostyle{%
+  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\ttfamily}}}
+\makeatother
+%% Now actually use the newly defined style.
+\urlstyle{leo}
+
+% Konfigurera utseende på kodlistning
+\lstset{
+basicstyle=\small,
+frame=lines,
+postbreak=\space, 
+breakindent=5pt,
+breaklines,
+xleftmargin=17pt,
+framexleftmargin=17pt,
+framexrightmargin=5pt,
+framexbottommargin=4pt,
+showstringspaces=false,
+showspaces=false,
+showtabs=false}
+
+% Avstavningar
+\hyphenation{XML-Http-Request}
+\hyphenation{XML-Http-Request-objektet}
+\hyphenation{web-server}
+\hyphenation{web-servern}
+\hyphenation{verktygs-program}
+\hyphenation{verktygs-programmet}
+\hyphenation{Java-Script}
+\hyphenation{design-val}
+\hyphenation{Design-val}
+\hyphenation{länk-attribut}
+\hyphenation{expedierings-objekt}
+
+
+%\usepackage{color}
+%\usepackage{xcolor}
+%\usepackage{caption}
+%\DeclareCaptionFont{white}{\color{white}}
+%\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+%\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+\author{Steve Eriksson \\steer237@student.liu.se}
+\title{Interaktiv visualisering av IP-nätverk}
+\date{Linköping, \today} 
+
+\begin{document}
+\includepdf[pages=1]{idasidor/rapportframsida.pdf}
+\includepdf[pages=1]{idasidor/rapportinsida.pdf}
+
+%\maketitle
+
+\pagenumbering{roman}
+
+% Sammanfattning
+\input{Sammanfattning.tex}
+
+\tableofcontents
+\listoffigures
+
+% Svenska namn på listningar
+\renewcommand{\lstlistingname}{Listning}
+\renewcommand{\lstlistlistingname}{Listningar}
+\lstlistoflistings
+\cleardoublepage % utan denna så blir numreringen fel på lol
+
+
+% -------------------------------------------------------------------------------
+
+\pagenumbering{arabic}
+\chapter{Inledning}
+% börja rapporten på sida 1
+\setcounter{page}{1}
+\input{Inledning.tex}
+
+\chapter{Krav}
+\label{chap:krav}
+\input{Krav.tex}
+
+\chapter{Bakgrund}
+\label{chap:bakgrund}
+\input{Bakgrund.tex}
+
+\chapter{Analys}
+\label{chap:analys}
+\input{Problemanalys.tex}
+
+\chapter{Implementation} %GENOMFÖRANDE
+\label{chap:implementation}
+\input{Systemoversikt.tex}
+\input{Generering.tex}
+\input{JavaScript-kod.tex}
+
+\chapter{Testning och utvärdering}
+\label{chap:test_och_utv}
+\input{Testning_och_utvardering.tex}
+
+\chapter{Diskussion och slutsatser}
+\input{Slutsats.tex}
+
+%\section{Referenser}
+%\section{Bilagor}
+
+%\section{Referenser}
+%\bibliographystyle{plain}
+\bibliographystyle{ieeetr}
+\bibliography{referenser.bib}
+\end{document}
+
